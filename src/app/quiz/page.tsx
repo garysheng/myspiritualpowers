@@ -1,5 +1,6 @@
 import { QuizContainer } from '@/components/quiz/quiz-container';
 import { Metadata } from 'next';
+import { AuroraBackground } from '@/components/ui/aurora-background';
 
 export const metadata: Metadata = {
   title: 'Spiritual Gifts Quiz - My Spiritual Powers',
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   return (
-    <main>
+    <AuroraBackground>
       <QuizContainer />
-    </main>
+    </AuroraBackground>
   );
 } 

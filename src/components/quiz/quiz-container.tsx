@@ -327,145 +327,155 @@ export function QuizContainer() {
       )}
 
       <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 space-y-8">
-        <Card className="w-full max-w-2xl p-6 space-y-6">
-          {/* Progress indicator */}
-          <div className="space-y-2">
-            {/* Question counter */}
-            <div className="flex justify-between items-center text-sm text-muted-foreground">
-              <span>
-                Question {(levelInfo?.questionIndexInLevel ?? 0) + 1} of {levelInfo?.questionsInLevel ?? 0} in {levelInfo?.levelName ?? ''}
-              </span>
-            </div>
+        <Card className="w-full max-w-2xl p-6 space-y-6 relative overflow-hidden">
+          {/* Add semi-transparent dark backdrop */}
+          <div className="absolute inset-0 bg-background/95 backdrop-blur-xl" />
+          
+          {/* Make content relative to appear above the backdrop */}
+          <div className="relative space-y-6">
+            {/* Progress indicator */}
+            <div className="space-y-2">
+              {/* Question counter */}
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <span>
+                  Question {(levelInfo?.questionIndexInLevel ?? 0) + 1} of {levelInfo?.questionsInLevel ?? 0} in {levelInfo?.levelName ?? ''}
+                </span>
+              </div>
 
-            {/* Overall progress bars */}
-            <div className="flex gap-1 h-1">
-              {LEVELS.map((level, index) => {
-                const levelStart = LEVELS.slice(0, index).reduce((sum, l) => sum + l.questions, 0);
-                const levelEnd = levelStart + level.questions;
-                const isCurrentLevel = progress.currentQuestionIndex >= levelStart && progress.currentQuestionIndex < levelEnd;
-                const isCompletedLevel = progress.currentQuestionIndex >= levelEnd;
-                const progressInThisLevel = isCompletedLevel ? 100 :
-                  isCurrentLevel ? ((progress.currentQuestionIndex - levelStart) / level.questions) * 100 : 0;
+              {/* Overall progress bars */}
+              <div className="flex gap-1 h-1">
+                {LEVELS.map((level, index) => {
+                  const levelStart = LEVELS.slice(0, index).reduce((sum, l) => sum + l.questions, 0);
+                  const levelEnd = levelStart + level.questions;
+                  const isCurrentLevel = progress.currentQuestionIndex >= levelStart && progress.currentQuestionIndex < levelEnd;
+                  const isCompletedLevel = progress.currentQuestionIndex >= levelEnd;
+                  const progressInThisLevel = isCompletedLevel ? 100 :
+                    isCurrentLevel ? ((progress.currentQuestionIndex - levelStart) / level.questions) * 100 : 0;
 
-                return (
-                  <div
-                    key={index}
-                    className="flex-1 bg-secondary rounded-full overflow-hidden"
-                  >
+                  return (
                     <div
-                      className={`h-full transition-all duration-300 ${isCompletedLevel ? 'bg-primary/40' :
-                          isCurrentLevel ? 'bg-primary' : 'bg-secondary'
+                      key={index}
+                      className="flex-1 bg-secondary rounded-full overflow-hidden"
+                    >
+                      <div
+                        className={`h-full transition-all duration-300 ${isCompletedLevel ? 'bg-primary/40' :
+                            isCurrentLevel ? 'bg-primary' : 'bg-secondary'
+                          }`}
+                        style={{ width: `${progressInThisLevel}%` }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Question content */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold min-h-[8rem] flex items-center">
+                {currentQuestion.text}
+              </h2>
+
+              {/* Caption for answer options */}
+              <p className="text-sm text-muted-foreground italic">
+                This statement resonates with me...
+              </p>
+
+              {/* Answer options */}
+              <div className="grid grid-cols-4 gap-3">
+                {[...currentQuestion.options].reverse().map((option, index) => {
+                  const keyNumber = index + 1;
+                  const optionLabels = [
+                    'Not Really',    // value 0
+                    'Somewhat',      // value 1
+                    'Strongly',      // value 2
+                    'Very Strongly', // value 3
+                  ];
+                  const fontWeights = [
+                    'font-normal',     // Not Really
+                    'font-medium',     // Somewhat
+                    'font-semibold',   // Strongly
+                    'font-bold',       // Very Strongly
+                  ][index];
+                  const intensityClasses = [
+                    'hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700', // Not Really
+                    'hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800', // Somewhat
+                    'hover:bg-indigo-100 dark:hover:bg-indigo-900/50 border-indigo-300 dark:border-indigo-700', // Strongly
+                    'hover:bg-violet-100 dark:hover:bg-violet-900/50 border-violet-400 dark:border-violet-600', // Very Strongly
+                  ][index];
+                  const selectedClasses = [
+                    'bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-500', // Not Really
+                    'bg-blue-100 dark:bg-blue-900/50 border-blue-400 dark:border-blue-600', // Somewhat
+                    'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500 dark:border-indigo-500', // Strongly
+                    'bg-violet-100 dark:bg-violet-900/50 border-violet-600 dark:border-violet-400', // Very Strongly
+                  ][index];
+
+                  return (
+                    <button
+                      key={option.id}
+                      onClick={() => handleAnswer(option.value, option.id)}
+                      disabled={isAnimating}
+                      className={`group relative p-4 text-center rounded-lg border-2 transition-all duration-200 ${selectedOptionId === option.id
+                          ? 'scale-95 transform'
+                          : progress.responses[currentQuestion.id] === option.value
+                            ? selectedClasses
+                            : `${intensityClasses} hover:scale-105`
+                        } ${isAnimating ? 'cursor-not-allowed' : 'cursor-pointer'
                         }`}
-                      style={{ width: `${progressInThisLevel}%` }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Question content */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold min-h-[8rem] flex items-center">
-              {currentQuestion.text}
-            </h2>
-
-            {/* Caption for answer options */}
-            <p className="text-sm text-muted-foreground italic">
-              This statement resonates with me...
-            </p>
-
-            {/* Answer options */}
-            <div className="grid grid-cols-4 gap-3">
-              {[...currentQuestion.options].reverse().map((option, index) => {
-                const keyNumber = index + 1;
-                const optionLabels = [
-                  'Not Really',    // value 0
-                  'Somewhat',      // value 1
-                  'Strongly',      // value 2
-                  'Very Strongly', // value 3
-                ];
-                const fontWeights = [
-                  'font-normal',     // Not Really
-                  'font-medium',     // Somewhat
-                  'font-semibold',   // Strongly
-                  'font-bold',       // Very Strongly
-                ][index];
-                const intensityClasses = [
-                  'hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700', // Not Really
-                  'hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800', // Somewhat
-                  'hover:bg-indigo-100 dark:hover:bg-indigo-900/50 border-indigo-300 dark:border-indigo-700', // Strongly
-                  'hover:bg-violet-100 dark:hover:bg-violet-900/50 border-violet-400 dark:border-violet-600', // Very Strongly
-                ][index];
-                const selectedClasses = [
-                  'bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-500', // Not Really
-                  'bg-blue-100 dark:bg-blue-900/50 border-blue-400 dark:border-blue-600', // Somewhat
-                  'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500 dark:border-indigo-500', // Strongly
-                  'bg-violet-100 dark:bg-violet-900/50 border-violet-600 dark:border-violet-400', // Very Strongly
-                ][index];
-
-                return (
-                  <button
-                    key={option.id}
-                    onClick={() => handleAnswer(option.value, option.id)}
-                    disabled={isAnimating}
-                    className={`group relative p-4 text-center rounded-lg border-2 transition-all duration-200 ${selectedOptionId === option.id
-                        ? 'scale-95 transform'
-                        : progress.responses[currentQuestion.id] === option.value
-                          ? selectedClasses
-                          : `${intensityClasses} hover:scale-105`
-                      } ${isAnimating ? 'cursor-not-allowed' : 'cursor-pointer'
-                      }`}
-                  >
-                    <span className="flex items-center justify-center h-full min-h-[2.5rem]">
-                      <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
-                        }`}>
-                        {optionLabels[index]}
+                    >
+                      <span className="flex items-center justify-center h-full min-h-[2.5rem]">
+                        <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
+                          }`}>
+                          {optionLabels[index]}
+                        </span>
+                        <span className={`text-sm text-muted-foreground transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
+                          }`}>
+                          Press {keyNumber}
+                        </span>
+                        {selectedOptionId === option.id && (
+                          <span className="animate-pulse">✓</span>
+                        )}
                       </span>
-                      <span className={`text-sm text-muted-foreground transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
-                        }`}>
-                        Press {keyNumber}
-                      </span>
-                      {selectedOptionId === option.id && (
-                        <span className="animate-pulse">✓</span>
+                      {/* Selected checkmark */}
+                      {progress.responses[currentQuestion.id] === option.value && (
+                        <span className="absolute bottom-2 right-2 text-white/30 text-sm">✓</span>
                       )}
-                    </span>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Navigation controls */}
-          <div className="flex justify-between items-center pt-4">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={isFirstQuestion}
-              className="flex items-center gap-2"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </Button>
-
-            {isLastQuestion ? (
+            {/* Navigation controls */}
+            <div className="flex justify-between items-center pt-4">
               <Button
-                onClick={handleComplete}
-                disabled={!hasAnswer}
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={isFirstQuestion}
                 className="flex items-center gap-2"
               >
-                Complete & Get Results
+                <ChevronLeft className="w-4 h-4" />
+                Previous
               </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                disabled={!hasAnswer}
-                className="flex items-center gap-2"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            )}
+
+              {isLastQuestion ? (
+                <Button
+                  onClick={handleComplete}
+                  disabled={!hasAnswer}
+                  className="flex items-center gap-2"
+                >
+                  Complete & Get Results
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  disabled={!hasAnswer}
+                  className="flex items-center gap-2"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
 
