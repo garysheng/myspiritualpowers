@@ -8,8 +8,25 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "My Spiritual Powers - Discover Your Spiritual Gifts",
+  title: "MySpiritualPowers.com - Discover Your Spiritual Gifts",
   description: "Take our interactive quiz to discover your unique spiritual gifts and superpowers. Get personalized insights and learn how to use your gifts to make a difference.",
+  openGraph: {
+    title: "Discover Your Spiritual Powers",
+    description: "Take the quiz to uncover your unique gifts",
+    images: [{
+      url: '/og.png',
+      width: 1748,
+      height: 852,
+      alt: 'MySpiritualPowers.com - Discover Your Spiritual Gifts',
+    }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Discover Your Spiritual Powers',
+    description: 'Take the quiz to uncover your unique gifts',
+    images: ['/og.png'],
+  },
 };
 
 export default function RootLayout({
