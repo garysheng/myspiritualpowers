@@ -301,11 +301,11 @@ export function QuizContainer() {
 
   if (!hasStarted) {
     return (
-      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 relative">
+      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center relative">
         <WelcomeScreen onStart={handleStart} />
         
-        {/* Login Button with subtle container */}
-        <div className="fixed bottom-4 w-full max-w-3xl mx-auto px-4">
+        {/* Login Button - hidden on mobile */}
+        <div className="hidden sm:block fixed bottom-4 w-full max-w-3xl mx-auto px-4">
           <div className="bg-secondary/30 backdrop-blur-sm rounded-lg p-2">
             <Button
               variant="ghost"

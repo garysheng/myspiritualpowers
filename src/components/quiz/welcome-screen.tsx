@@ -30,7 +30,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   };
 
   return (
-    <Card className="w-full max-w-3xl relative overflow-hidden bg-black/90 max-h-[90vh] flex flex-col">
+    <Card className="w-full max-w-3xl relative overflow-hidden bg-black/90 max-h-[90vh] flex flex-col sm:rounded-lg rounded-none">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-primary/3 to-indigo-500/5" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(120,119,198,0.05),transparent_50%)]" />
@@ -39,7 +39,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       <div className="overflow-y-auto flex-1">
         {step === 1 ? (
           <>
-            <CardHeader className="relative space-y-2 p-4">
+            <CardHeader className="relative space-y-2 p-3 sm:p-4">
               <div className="flex items-center justify-center">
                 <div className="relative">
                   <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-primary/20 to-indigo-500/20 rounded-full blur-2xl opacity-50 animate-pulse" />
@@ -54,7 +54,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="relative space-y-4 p-4">
+            <CardContent className="relative space-y-4 p-3 sm:p-4">
               <div className="space-y-3">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                   <Gift className="w-5 h-5" />
@@ -87,7 +87,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </>
         ) : (
           <>
-            <CardHeader className="relative space-y-2 p-4">
+            <CardHeader className="relative space-y-2 p-3 sm:p-4">
               <div className="flex items-center justify-center">
                 <div className="relative">
                   <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-primary/20 to-indigo-500/20 rounded-full blur-2xl opacity-50 animate-pulse" />
@@ -102,33 +102,33 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="relative p-4">
-              <div className="bg-black/60 p-3 sm:p-4 rounded-lg backdrop-blur-sm">
-                <p className="mb-4 text-center text-sm sm:text-base">This statement resonates with me...</p>
-                <div className="grid gap-2">
-                  <div className="flex items-start gap-2 sm:gap-3 p-2 rounded-lg hover:bg-black/80 transition-colors">
-                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/40 mt-2" />
+            <CardContent className="relative p-3 sm:p-4">
+              <div className="bg-black/60 p-2 sm:p-4 rounded-lg backdrop-blur-sm">
+                <p className="mb-2 sm:mb-4 text-center text-sm sm:text-base">This statement resonates with me...</p>
+                <div className="grid gap-1.5 sm:gap-2">
+                  <div className="flex items-start gap-1.5 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-black/80 transition-colors">
+                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/40 mt-1.5" />
                     <div>
                       <span className="font-medium text-sm sm:text-base">Not Really</span>
                       <p className="text-xs sm:text-sm text-muted-foreground">I don&apos;t identify with this statement</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2 sm:gap-3 p-2 rounded-lg hover:bg-black/80 transition-colors">
-                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/60 mt-2" />
+                  <div className="flex items-start gap-1.5 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-black/80 transition-colors">
+                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/60 mt-1.5" />
                     <div>
                       <span className="font-medium text-sm sm:text-base">Somewhat</span>
                       <p className="text-xs sm:text-sm text-muted-foreground">I partially identify with this statement</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2 sm:gap-3 p-2 rounded-lg hover:bg-black/80 transition-colors">
-                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/80 mt-2" />
+                  <div className="flex items-start gap-1.5 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-black/80 transition-colors">
+                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary/80 mt-1.5" />
                     <div>
                       <span className="font-medium text-sm sm:text-base">Strongly</span>
                       <p className="text-xs sm:text-sm text-muted-foreground">I strongly identify with this statement</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2 sm:gap-3 p-2 rounded-lg hover:bg-black/80 transition-colors">
-                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary mt-2" />
+                  <div className="flex items-start gap-1.5 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-black/80 transition-colors">
+                    <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-primary mt-1.5" />
                     <div>
                       <span className="font-medium text-sm sm:text-base">Very Strongly</span>
                       <p className="text-xs sm:text-sm text-muted-foreground">This statement describes me perfectly</p>
@@ -144,7 +144,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       {/* Footer always stays at bottom */}
       <div className="relative">
         {step === 1 ? (
-          <CardFooter className="p-4">
+          <CardFooter className="p-3 sm:p-4">
             <Button 
               size="lg" 
               className="w-full relative group"
@@ -158,7 +158,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             </Button>
           </CardFooter>
         ) : (
-          <CardFooter className="flex gap-2 p-4">
+          <CardFooter className="flex gap-2 p-3 sm:p-4">
             <Button 
               variant="outline"
               size="lg" 
