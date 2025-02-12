@@ -23,24 +23,14 @@ export function Header() {
             <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
             <div className="relative flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2 py-1 bg-background rounded-lg ring-1 ring-gray-900/5">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="font-bold text-base sm:text-xl bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
-                MySpiritualPowers.com
+              <span className="font-bold text-sm sm:text-base md:text-xl bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+                MySpiritualPowers<span className="hidden sm:inline">.com</span>
               </span>
             </div>
           </div>
         </Link>
 
         <nav className="flex items-center gap-6">
-          <Link 
-            href="/" 
-            className={`relative ${
-              pathname === '/' 
-                ? 'text-primary font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-full' 
-                : 'text-muted-foreground hover:text-foreground transition-colors'
-            }`}
-          >
-            Home
-          </Link>
           {!isQuizPage && (
             user ? (
               <Link href="/profile">

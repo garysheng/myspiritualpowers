@@ -425,11 +425,11 @@ export function QuizContainer() {
                         }`}
                     >
                       <span className="flex items-center justify-center h-full min-h-[2rem] sm:min-h-[2.5rem]">
-                        <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
+                        <span className={`${fontWeights} group-hover:sm:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
                           }`}>
                           {optionLabels[index]}
                         </span>
-                        <span className={`text-sm text-muted-foreground transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
+                        <span className={`text-sm text-muted-foreground transition-opacity absolute hidden sm:block ${selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
                           }`}>
                           Press {keyNumber}
                         </span>

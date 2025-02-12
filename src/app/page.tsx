@@ -7,13 +7,13 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-24 px-4 overflow-hidden">
+      <section className="relative py-12 sm:py-24 px-4 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-b from-violet-500/10 via-background to-background" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.3),rgba(255,255,255,0))]" />
         
-        <div className="relative max-w-6xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+        <div className="relative max-w-6xl mx-auto text-center space-y-4 sm:space-y-8">
+          <div className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
             <Star className="w-4 h-4" />
             <span>Over 10,000 people have discovered their spiritual gifts</span>
           </div>
@@ -27,7 +27,7 @@ export default function HomePage() {
             Uncover your unique spiritual gifts and learn how to use them effectively in your daily life and ministry.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
             <Link href="/quiz">
               <Button size="lg" className="w-full sm:w-auto gap-2 text-lg px-8">
                 Start Your Journey <ArrowRight className="w-5 h-5" />
@@ -41,7 +41,7 @@ export default function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-16 pt-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-4xl mx-auto mt-8 sm:mt-16 pt-4 sm:pt-8">
             <div className="space-y-2">
               <div className="text-3xl font-bold text-primary">10K+</div>
               <div className="text-sm text-muted-foreground">People Assessed</div>
