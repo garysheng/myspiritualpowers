@@ -150,7 +150,7 @@ export default function ResultsPage() {
                   </h1>
                 </div>
                 
-                <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent pb-3">
                   {results.spiritualArchetype.name}
                 </div>
               </CardTitle>
