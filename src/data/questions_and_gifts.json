@@ -1,0 +1,681 @@
+{
+  "quizQuestions": [
+    {
+      "id": 1,
+      "question": "I have a desire to speak direct messages that I receive from God in order to edify, exhort or comfort others."
+    },
+    {
+      "id": 2,
+      "question": "I have enjoyed ministering to a certain group of people over a long period of time, sharing personally in their successes and their failures."
+    },
+    {
+      "id": 3,
+      "question": "People have told me that I have helped them learn biblical truths in a meaningful way."
+    },
+    {
+      "id": 4,
+      "question": "I have applied spiritual truth effectively to critical situations in my own life."
+    },
+    {
+      "id": 5,
+      "question": "Others have told me I have helped them to discern key and important facts of Scripture."
+    },
+    {
+      "id": 6,
+      "question": "I have verbally encouraged and helped the wavering, the troubled or the discouraged"
+    },
+    {
+      "id": 7,
+      "question": "Others in my church have noted that I am able to see through phoniness before it is evident to other people."
+    },
+    {
+      "id": 8,
+      "question": "I find I manage money well in order to give liberally to the Lord's work."
+    },
+    {
+      "id": 9,
+      "question": "I have assisted Christian leaders to relieve them for concentrating on their essential jobs."
+    },
+    {
+      "id": 10,
+      "question": "I have a desire to work with those who have physical or mental problems in order to alleviate their suffering."
+    },
+    {
+      "id": 11,
+      "question": "I feel comfortable relating to people of other cultures, and they seem to accept me."
+    },
+    {
+      "id": 12,
+      "question": "I have led others to a decision for salvation through faith in Christ."
+    },
+    {
+      "id": 13,
+      "question": "My home is always open to people who need a place to stay."
+    },
+    {
+      "id": 14,
+      "question": "When in a group, I am the one to whom others often look for vision and direction."
+    },
+    {
+      "id": 15,
+      "question": "When I speak, people seem to listen and agree."
+    },
+    {
+      "id": 16,
+      "question": "When a group I am in is lacking organization, I love to step in to fill the gap."
+    },
+    {
+      "id": 17,
+      "question": "Others can point to specific instances in which my prayers have resulted in visible miracles."
+    },
+    {
+      "id": 18,
+      "question": "In the name of the Lord, I have been used in curing diseases instantaneously."
+    },
+    {
+      "id": 19,
+      "question": "I have spoken in tongues."
+    },
+    {
+      "id": 20,
+      "question": "Sometimes when a person speaks in tongues, I seem to know what God is saying through them."
+    },
+    {
+      "id": 21,
+      "question": "I could live more comfortably, but I choose not to in order to identify with the poor."
+    },
+    {
+      "id": 22,
+      "question": "I am single and enjoy it."
+    },
+    {
+      "id": 23,
+      "question": "I spend at least an hour a day in prayer."
+    },
+    {
+      "id": 24,
+      "question": "I have spoken directly to evil spirits, and they have obeyed me."
+    },
+    {
+      "id": 25,
+      "question": "I enjoy being called on to do odd jobs around the church."
+    },
+    {
+      "id": 26,
+      "question": "A number of pastors and/or ministry leaders have told me that they desire to minister and to be held accountable under my spiritual covering."
+    },
+    {
+      "id": 27,
+      "question": "I have an insatiable appetite for the presence of God."
+    },
+    {
+      "id": 28,
+      "question": "Through God, I have been used to reveal to others specific things that will happen in the future, and they have come to pass."
+    },
+    {
+      "id": 29,
+      "question": "I have enjoyed assuming the responsibility for the spiritual well-being of a particular group of Christians."
+    },
+    {
+      "id": 30,
+      "question": "I feel I can explain the New Testament teaching about the health and ministry of the Body of Christ in a relevant way."
+    },
+    {
+      "id": 31,
+      "question": "I can intuitively arrive at solutions to fairly complicated problems."
+    },
+    {
+      "id": 32,
+      "question": "I have had insights relating to the spiritual truth that others have said helped bring them closer to God."
+    },
+    {
+      "id": 33,
+      "question": "I can effectively motivate people to get busy and do what they are supposed to do."
+    },
+    {
+      "id": 34,
+      "question": "I can \"see\" the Spirit of God resting on certain people from time to time."
+    },
+    {
+      "id": 35,
+      "question": "My giving records show that I contribute considerably more than 10 percent of my income to the Lord's work."
+    },
+    {
+      "id": 36,
+      "question": "Other people have told me that I have helped them become more effective in their ministries."
+    },
+    {
+      "id": 37,
+      "question": "I have offered to care for others when they have had material or physical needs."
+    },
+    {
+      "id": 38,
+      "question": "I feel I could learn another language well in order to minister to those in a different culture."
+    },
+    {
+      "id": 39,
+      "question": "I have shared joyfully how Christ has brought me to Himself in a way that is meaningful to nonbelievers."
+    },
+    {
+      "id": 40,
+      "question": "I enjoy taking charge of church suppers or social events."
+    },
+    {
+      "id": 41,
+      "question": "I have believed God for the impossible and seen it happen in a tangible way."
+    },
+    {
+      "id": 42,
+      "question": "Other Christians have followed my leadership because they trusted me."
+    },
+    {
+      "id": 43,
+      "question": "I enjoy handling the details of organizing ideas, people, resources and time for more effective ministry."
+    },
+    {
+      "id": 44,
+      "question": "God has used me personally to perform supernatural signs and wonders."
+    },
+    {
+      "id": 45,
+      "question": "I enjoy praying for sick people because I know ahead of time that many of them will be healed as a result."
+    },
+    {
+      "id": 46,
+      "question": "I have spoken an immediate message of God to His people in a language I have never learned."
+    },
+    {
+      "id": 47,
+      "question": "I have interpreted public tongues with the result that the Body of Christ was edified, exhorted or comforted."
+    },
+    {
+      "id": 48,
+      "question": "Living a simple lifestyle is an exciting challenge for me."
+    },
+    {
+      "id": 49,
+      "question": "Other people have noted that I feel more indifferent about not being married than most."
+    },
+    {
+      "id": 50,
+      "question": "When I hear an urgent prayer request, I pray for that need for several days at least."
+    },
+    {
+      "id": 51,
+      "question": "I have actually heard a demon speak in a loud voice."
+    },
+    {
+      "id": 52,
+      "question": "I don't have many special skills, but I volunteer to do what needs to be done around the church."
+    },
+    {
+      "id": 53,
+      "question": "I am known as a leader of leaders."
+    },
+    {
+      "id": 54,
+      "question": "I intuitively know what should happen next in a worship service."
+    },
+    {
+      "id": 55,
+      "question": "People have told me that I have communicated timely and urgent messages that must have come directly from the Lord."
+    },
+    {
+      "id": 56,
+      "question": "I feel unafraid of offering spiritual guidance and direction to a group of Christians."
+    },
+    {
+      "id": 57,
+      "question": "I can devote considerable time to learning new biblical truths in order to communicate them to others."
+    },
+    {
+      "id": 58,
+      "question": "When other people have a problem, I can frequently guide them to the best biblical solution."
+    },
+    {
+      "id": 59,
+      "question": "Through study or experience, I have discerned major strategies or techniques that God seems to use in furthering His kingdom."
+    },
+    {
+      "id": 60,
+      "question": "People come to me in their afflictions or suffering because they know that I will listen to them and understand."
+    },
+    {
+      "id": 61,
+      "question": "I can tell with a fairly high degree of assurance when a person is afflicted by an evil spirit."
+    },
+    {
+      "id": 62,
+      "question": "When I am moved by an appeal to give to God's work, I usually can find the money I need to help."
+    },
+    {
+      "id": 63,
+      "question": "I have enjoyed doing routine tasks that have allowed more effective ministry on the part of others."
+    },
+    {
+      "id": 64,
+      "question": "I enjoy visiting in hospitals and/or retirement homes and feel I do well in such a ministry."
+    },
+    {
+      "id": 65,
+      "question": "People of different races or cultures have been attracted to me, and we have related well."
+    },
+    {
+      "id": 66,
+      "question": "Non-Christians have noted that they feel comfortable when they are around me, and that I have a positive effect on them toward developing a faith in Christ."
+    },
+    {
+      "id": 67,
+      "question": "When people come to our home, they indicate that they \"feel at home\" with us."
+    },
+    {
+      "id": 68,
+      "question": "Other people have told me that I had faith to accomplish what seemed impossible to them."
+    },
+    {
+      "id": 69,
+      "question": "When I set goals, others seem to accept them readily."
+    },
+    {
+      "id": 70,
+      "question": "I have been able to make effective and efficient plans for accomplishing the goals of a group."
+    },
+    {
+      "id": 71,
+      "question": "God regularly seems to do impossible things throughout my life."
+    },
+    {
+      "id": 72,
+      "question": "Others have told me that God healed them of an emotional problem when I ministered to them."
+    },
+    {
+      "id": 73,
+      "question": "I can speak to God in a language I have never learned."
+    },
+    {
+      "id": 74,
+      "question": "I have prayed that I may interpret if someone begins speaking in tongues."
+    },
+    {
+      "id": 75,
+      "question": "I am not poor, but I can warmly identify with poor people."
+    },
+    {
+      "id": 76,
+      "question": "I am glad I have more time to serve the Lord because I am single."
+    },
+    {
+      "id": 77,
+      "question": "Day in and day out, intercessory prayer is one of my favorite ways of spending time."
+    },
+    {
+      "id": 78,
+      "question": "Others call on me when they suspect that someone is demonized."
+    },
+    {
+      "id": 79,
+      "question": "Others have mentioned that I seem to enjoy routine tasks and do well at them."
+    },
+    {
+      "id": 80,
+      "question": "Christian leaders seem pleased to work under my leadership, and they respect my authority when we undertake a common task."
+    },
+    {
+      "id": 81,
+      "question": "During worship, I can often tell if there is a spiritual force attempting to hinder our connection with God."
+    },
+    {
+      "id": 82,
+      "question": "I sometimes have a strong sense of what God wants to say to people in response to particular situations."
+    },
+    {
+      "id": 83,
+      "question": "I have helped fellow believers by guiding them to relevant portions of the Bible and praying with them."
+    },
+    {
+      "id": 84,
+      "question": "I feel I can communicate significant truths to others and see resulting changes in knowledge, attitudes, values or conduct."
+    },
+    {
+      "id": 85,
+      "question": "Some people indicate that I have perceived and applied biblical truths to the specific needs of fellow believers."
+    },
+    {
+      "id": 86,
+      "question": "I study and read quite a bit in order to learn new biblical truths."
+    },
+    {
+      "id": 87,
+      "question": "I have a desire to effectively counsel those in need."
+    },
+    {
+      "id": 88,
+      "question": "I can recognize whether a person's teaching or actions are from God, from Satan, or of human origin."
+    },
+    {
+      "id": 89,
+      "question": "I am so confident that God will meet my financial needs that I do not hesitate to give to His work sacrificially and consistently."
+    },
+    {
+      "id": 90,
+      "question": "When I do things behind the scenes and others are helped, I am joyful."
+    },
+    {
+      "id": 91,
+      "question": "People call on me to help those who are less fortunate."
+    },
+    {
+      "id": 92,
+      "question": "I would be willing to leave comfortable surroundings if it would enable me to share Christ with less-fortunate people."
+    },
+    {
+      "id": 93,
+      "question": "I get frustrated when others don't seem to share their faith with nonbelievers as much as I do."
+    },
+    {
+      "id": 94,
+      "question": "Others have mentioned to me that I am a very hospitable person."
+    },
+    {
+      "id": 95,
+      "question": "There have been times when I have felt sure I knew God's specific will for the future growth of His work, even when others have not been so sure."
+    },
+    {
+      "id": 96,
+      "question": "When I am part of a group, others seem to back off and expect me to take leadership."
+    },
+    {
+      "id": 97,
+      "question": "I am able to give directions to others without using persuasion to get them to accomplish a certain task."
+    },
+    {
+      "id": 98,
+      "question": "People have told me that I was God's instrument that brought a supernatural change in lives or circumstances."
+    },
+    {
+      "id": 99,
+      "question": "I have prayed for others and instantaneous physical healing has often occurred."
+    },
+    {
+      "id": 100,
+      "question": "When I give a public message in tongues, I expect it to be interpreted."
+    },
+    {
+      "id": 101,
+      "question": "I have interpreted tongues in a way that seemed to bless others."
+    },
+    {
+      "id": 102,
+      "question": "Others tell me that I sacrifice too much materially in order to fulfill God's calling."
+    },
+    {
+      "id": 103,
+      "question": "I am single and have little difficulty controlling my sexual desires."
+    },
+    {
+      "id": 104,
+      "question": "Others have told me that my prayers for them have been answered in tangible ways."
+    },
+    {
+      "id": 105,
+      "question": "Other people have been instantly delivered from demonic oppression when I have prayed."
+    },
+    {
+      "id": 106,
+      "question": "I prefer being active and doing something rather than just sitting around talking or reading or listening to a speaker."
+    },
+    {
+      "id": 107,
+      "question": "I regularly receive revelation from God as to what the Holy Spirit is currently saying to the Church."
+    },
+    {
+      "id": 108,
+      "question": "Others have told me that my worship helps them enter into the presence of God."
+    },
+    {
+      "id": 109,
+      "question": "I frequently feel that I know exactly what God wants to do in ministry at a specific point in time."
+    },
+    {
+      "id": 110,
+      "question": "People with needs have told me that I have helped them be restored to the Christian community."
+    },
+    {
+      "id": 111,
+      "question": "Studying the Bible and sharing my insights with others are very satisfying for me."
+    },
+    {
+      "id": 112,
+      "question": "I have felt an unusual presence of God and personal confidence when important decisions needed to be made."
+    },
+    {
+      "id": 113,
+      "question": "I have the ability to discover new truths for myself through reading or observing situations firsthand."
+    },
+    {
+      "id": 114,
+      "question": "I have helped others find a biblical solution to their affliction or suffering."
+    },
+    {
+      "id": 115,
+      "question": "I can tell whether a person speaking in tongues is genuine."
+    },
+    {
+      "id": 116,
+      "question": "I have been willing to maintain a lower standard of living in order to benefit God's work."
+    },
+    {
+      "id": 117,
+      "question": "When I serve the Lord, I truthfully don't care if someone else gets the credit for what I do."
+    },
+    {
+      "id": 118,
+      "question": "I frequently enjoy spending time with a lonely, shut-in person or with someone in prison."
+    },
+    {
+      "id": 119,
+      "question": "More than most, I have had a strong desire to see people of other countries win to the Lord."
+    },
+    {
+      "id": 120,
+      "question": "I am attracted to nonbelievers mainly because of my desire to win them to Christ."
+    },
+    {
+      "id": 121,
+      "question": "I have desired to make my home available to those in the Lord's service whenever needed."
+    },
+    {
+      "id": 122,
+      "question": "Others have told me that I am a person of unusual vision, and I agree."
+    },
+    {
+      "id": 123,
+      "question": "When I am in charge, things seem to run smoothly."
+    },
+    {
+      "id": 124,
+      "question": "I have enjoyed bearing the responsibility for the success of a particular task within my church or in the workplace."
+    },
+    {
+      "id": 125,
+      "question": "In the name of the Lord, I have been able to help blind people receive their sight."
+    },
+    {
+      "id": 126,
+      "question": "When I pray for the sick, either I or they feel sensations of tingling or warmth."
+    },
+    {
+      "id": 127,
+      "question": "When I speak in tongues to a group, I believe it is edifying to the Lord's Body."
+    },
+    {
+      "id": 128,
+      "question": "I have interpreted tongues in such a way that the message appeared to be directly from God."
+    },
+    {
+      "id": 129,
+      "question": "Poor people accept me easily because I choose to live on their level."
+    },
+    {
+      "id": 130,
+      "question": "I readily identify with Paul's desire for others to be single as he was."
+    },
+    {
+      "id": 131,
+      "question": "When I pray, God frequently speaks to me, and I recognize His voice."
+    },
+    {
+      "id": 132,
+      "question": "I regularly cast out demons in Jesus' name."
+    },
+    {
+      "id": 133,
+      "question": "I respond cheerfully when asked to do a job, even if it seems menial."
+    },
+    {
+      "id": 134,
+      "question": "When I call Christian leaders to come together for a certain purpose, a significant number of them respond."
+    },
+    {
+      "id": 135,
+      "question": "I have a compelling desire to lead others into an experience with God."
+    }
+  ],
+  "spiritualGifts": [
+    {
+      "gift": "Prophecy",
+      "definition": "The gift of prophecy is the special ability that God gives to certain members of the Body of Christ to receive and communicate an immediate message of God to His people through a divinely anointed utterance.",
+      "scriptureReferences": "Luke 7:26 Acts 15:32. Acts 21:9-11. Romans 12:6. 1 Corinthians 12:10, 28. Ephesians 4:11-13"
+    },
+    {
+      "gift": "Pastor",
+      "definition": "The gift of a pastor is the special ability that God gives to certain members of the Body of Christ to assume long-term personal responsibility for the spiritual welfare of a group of believers. (Note: The term 'pastor' is commonly used to describe the leader of a local congregation; however, many who lead churches have dominant gifts other than pastor [e.g., leader or teacher]. Those leaders who do not have the dominant gift of the pastor may augment their role using volunteers or staff members.)",
+      "scriptureReferences": "John 10:1-18 Ephesians 4:11-13. 1 Timothy 3:1-7 1 Peter 5:1-3"
+    },
+    {
+      "gift": "Teaching",
+      "definition": "The gift of teaching is the special ability that God gives to certain members of the Body of Christ to communicate information relevant to the health and ministry of the Body and its members in such a way that others will learn.",
+      "scriptureReferences": "Acts 18:24-28 Acts 20:20-21 Romans 12:7 1 Corinthians 12:28 Ephesians 4:11-13"
+    },
+    {
+      "gift": "Wisdom",
+      "definition": "The gift of wisdom is the special ability that God gives to certain members of the Body of Christ to know the mind of the Holy Spirit in such a way as to receive insight into how given knowledge may best be applied to specific needs arising in the Body of Christ. (Note: Pentecostals and charismatics often use the term 'word of wisdom,' meaning a revelatory message God gives to bring resolution to a certain situation. I feel the charismatic 'word of wisdom' is really a subset of the gift of prophecy, not the gift of wisdom. A judge, on the other hand, would be one who has the gift of wisdom.)",
+      "scriptureReferences": "Acts 6:3, 10 1 Corinthians 2:1-13. 1 Corinthians 12:8 James 1:5-62 Peter 3:15-16"
+    },
+    {
+      "gift": "Knowledge",
+      "definition": "The gift of knowledge is the special ability that God gives to certain members of the Body of Christ to discover, accumulate, analyze and clarify information and ideas that are pertinent to the well-being of the Body.",
+      "scriptureReferences": "Acts 5:1-11. 1 Corinthians 2:14. 1 Corinthians 12:8 2 Corinthians 11:6. Colossians 2:2-3"
+    },
+    {
+      "gift": "Exhortation",
+      "definition": "The gift of exhortation—sometimes called the gift of counseling—is the special ability that God gives to certain members of the Body of Christ to minister words of comfort, consolation, encouragement and counsel to other members of the Body in such a way that they feel helped and healed.",
+      "scriptureReferences": "Acts 14:22 Romans 12:8 1 Timothy 4:13. Hebrews 10:25"
+    },
+    {
+      "gift": "Discerning of Spirits",
+      "definition": "The gift of discerning (or discernment) of spirits is the special ability that God gives to certain members of the Body of Christ to know with assurance whether certain behavior purported to be of God is in reality divine, human or satanic.",
+      "scriptureReferences": "Matthew 16:21-23 Acts 5:1-11. Acts 16:16-18 1 Corinthians 12:10. 1 John 4:1-6"
+    },
+    {
+      "gift": "Giving",
+      "definition": "The gift of giving is the special ability that God gives to certain members of the Body of Christ to contribute their material resources to the work of the Lord liberally and cheerfully, above and beyond the tithes and offerings expected of all believers.",
+      "scriptureReferences": "Mark 12:41-44 Romans 12:8 2 Corinthians 8:1-7 2 Corinthians 9:2-8"
+    },
+    {
+      "gift": "Helps",
+      "definition": "The gift of helps is the special ability that God gives to certain members of the Body of Christ to invest the talents they have in the life and ministry of other members of the Body, thus enabling those others to increase the effectiveness of their own spiritual gifts. (Note: The gift of helps may be confused with the gift of service. Someone with the gift of helps usually aids one individual [e.g., an administrative assistant], while a person with the gift of service is willing to do whatever is necessary for a cause or project.)",
+      "scriptureReferences": "Mark 15:40-41 Luke 8:2-3 Acts 9:36. Romans 16:1-2 1 Corinthians 12:28"
+    },
+    {
+      "gift": "Mercy",
+      "definition": "The gift of mercy is the special ability that God gives to certain members of the Body of Christ to feel genuine empathy and compassion for individuals (both Christian and non-Christian) who suffer distressing physical, mental or emotional problems, and to translate that compassion into cheerfully done deeds that reflect Christ's love and alleviate the suffering.",
+      "scriptureReferences": "Matthew 20:29-34 Matthew 25:34-40. Mark 9:41. Luke 10:33-35 Acts 11:28-30. Acts 16:33-34 Romans 12:8"
+    },
+    {
+      "gift": "Missionary",
+      "definition": "The gift of a missionary is the special ability that God gives to certain members of the Body of Christ to minister whatever other spiritual gifts they have in a second culture. (Note: The gift of the missionary should not be confused with the gift of the apostle. Some apostles have the gift of missionary and do cross-cultural ministry [e.g., the apostle Paul], while other apostles do not have the missionary gift and therefore they minister monoculturally [e.g., the apostle Peter].)",
+      "scriptureReferences": "Acts 8:4 Acts 13:2-3 Acts 22:21 Romans 10:15 1 Corinthians 9:19-23. Ephesians 3:6-8"
+    },
+    {
+      "gift": "Evangelist",
+      "definition": "The gift of evangelist is the special ability that God gives to certain members of the Body of Christ to share the Gospel with nonbelievers in such a way that they become Jesus' disciples and responsible members of the Body of Christ.",
+      "scriptureReferences": "Acts 8:5-6 Acts 8:26-40 Acts 14:21 Acts 21:8 Ephesians 4:11-13. 2 Timothy 4:5"
+    },
+    {
+      "gift": "Hospitality",
+      "definition": "The gift of hospitality is the special ability that God gives to certain members of the Body of Christ to provide an open house and a warm welcome to those in need of food and lodging.",
+      "scriptureReferences": "Acts 16:14-15 Romans 12:9-13. Romans 16:23 Hebrews 13:1-2 1 Peter 4:9"
+    },
+    {
+      "gift": "Faith",
+      "definition": "The gift of faith is the special ability that God gives to certain members of the Body of Christ to discern with extraordinary confidence the will and purposes of God for His work.",
+      "scriptureReferences": "Acts 11:22-24 Acts 27:21-25. Romans 4:18-21 1 Corinthians 12:9. Hebrews 11"
+    },
+    {
+      "gift": "Leadership",
+      "definition": "The gift of leadership is the special ability that God gives to certain members of the Body of Christ to set goals in accordance with God's purpose for the future and to communicate these goals to others in such a way that they voluntarily and harmoniously work together to accomplish those goals for the glory of God.",
+      "scriptureReferences": "Luke 9:51 Acts 7:10 Acts 15:7-11 Romans 12:8 1 Timothy 5:17. Hebrews 13:17"
+    },
+    {
+      "gift": "Administration",
+      "definition": "The gift of administration is the special ability that God gives to certain members of the Body of Christ to understand clearly the immediate and long-range goals of a particular unit of the Body of Christ and to devise and execute effective plans for the accomplishment of those goals.",
+      "scriptureReferences": "Luke 14:28-30 Acts 6:1-7 Acts 27:11. 1 Corinthians 12:28. Titus 1:5"
+    },
+    {
+      "gift": "Miracles",
+      "definition": "The gift of miracles is the special ability that God gives to certain members of the Body of Christ to serve as human intermediaries through whom it pleases God to perform powerful acts that are perceived by observers to have altered the ordinary course of nature.",
+      "scriptureReferences": "Acts 9:36-42 Acts 19:11-20 Acts 20:7-12. Romans 15:18-19. 1 Corinthians 12:10, 28. 2 Corinthians 12:12"
+    },
+    {
+      "gift": "Healing",
+      "definition": "The gift of healing is the special ability that God gives to certain members of the Body of Christ to serve as human intermediaries through whom it pleases God to cure illness and restore health apart from the use of natural means.",
+      "scriptureReferences": "Acts 3:1-10 Acts 5:12-16 Acts 9:32-35 • Acts 28:7-10 1 Corinthians 12:9, 28"
+    },
+    {
+      "gift": "Tongues",
+      "definition": "The gift of tongues is the special ability that God gives to certain members of the Body of Christ (a) to speak to God in a language they have never learned and/or (b) to receive and communicate an immediate message of God to His people through a divinely anointed utterance in a language they have never learned.",
+      "scriptureReferences": "Mark 16:17. Acts 2:1-13. Acts 10:44 46 • Acts 19:1-7 1 Corinthians 12:10, 28. 1 Corinthians 14:13-19"
+    },
+    {
+      "gift": "Interpretation of Tongues",
+      "definition": "The gift of interpretation is the special ability that God gives to certain members of the Body of Christ to make known in the vernacular the message of one who speaks in tongues.",
+      "scriptureReferences": "1 Corinthians 12:10, 30. 1 Corinthians 14:13 • 1 Corinthians 14:26-28"
+    },
+    {
+      "gift": "Voluntary Poverty",
+      "definition": "The gift of voluntary poverty is the special ability that God gives to certain members of the Body of Christ to renounce material comfort and luxury and adopt a personal lifestyle equivalent to those living at the poverty level in a given society in order to serve God more effectively.",
+      "scriptureReferences": "Acts 2:44-45 Acts 4:34-37. 1 Corinthians 13:1-3 2 Corinthians 6:10. 2 Corinthians 8:9"
+    },
+    {
+      "gift": "Celibacy",
+      "definition": "The gift of celibacy is the special ability that God gives to certain members of the Body of Christ to remain single and enjoy it; to be unmarried and not suffer undue sexual temptations.",
+      "scriptureReferences": "Matthew 19:10-12 1 Corinthians 7:7-8"
+    },
+    {
+      "gift": "Intercession",
+      "definition": "The gift of intercession is the special ability that God gives to certain members of the Body of Christ to pray for extended periods of time on a regular basis and see frequent and specific answers to their prayers, to a degree much greater than that which is expected of the average Christian.",
+      "scriptureReferences": "Luke 22:41-44 Acts 12:12. Colossians 1:9-12. Colossians 4:12-13 1 Timothy 2:1-2. James 5:14-16"
+    },
+    {
+      "gift": "Deliverance",
+      "definition": "The gift of deliverance is the special ability that God gives to certain members of the Body of Christ to cast out demons and evil spirits. (Note: This gift has also been referred to as the gift of exorcism; however, that term has been degraded due to its frequent use by those practicing occult exorcism, a counterfeit form of deliverance.)",
+      "scriptureReferences": "Matthew 12:22-32 Luke 10:12-20 Acts 8:5-8 Acts 16:16-18"
+    },
+    {
+      "gift": "Service",
+      "definition": "The gift of service—sometimes called the gift of volunteer—is the special ability that God gives to certain members of the Body of Christ to identify the unmet needs involved in a task related to God's work, and to make use of available resources to meet those needs and help accomplish the desired results. (Note: The gift of service may be confused with the gift of helps. See note on helps for clarification.)",
+      "scriptureReferences": "Acts 6:1-7 Romans 12:7 Galatians 6:2, 10 2 Timothy 1:16-18 Titus 3:14"
+    },
+    {
+      "gift": "Apostle",
+      "definition": "The gift of apostles is the special ability that God gives to certain members of the Body of Christ to assume and to exercise divinely imparted authority in order to establish the foundational government of an assigned sphere of ministry within the Church. An apostle hears from the Holy Spirit and sets things in order accordingly for the Church's health, growth, maturity and outreach. (Note: 'Church' refers to the believers who gather weekly, and also to the believers scattered in the workplace.)",
+      "scriptureReferences": "Luke 6:12-13 1 Corinthians 12:28 Ephesians 2:20. Ephesians 4:11-13"
+    },
+    {
+      "gift": "Leading Worship",
+      "definition": "The gift of leading worship is the special ability that God gives to certain members of the Body of Christ to accurately discern the heart of God for a particular public worship service, to draw others into an intimate experience with God during the worship time and to allow the Holy Spirit to change directions and emphases as the service progresses.",
+      "scriptureReferences": "1 Samuel 16:23 1 Chronicles 9:33. 2 Chronicles 5:12-14"
+    }
+  ]
+}
