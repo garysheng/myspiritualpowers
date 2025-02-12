@@ -7,23 +7,22 @@ import {
   Link,
   Hr,
   Button,
-  Img,
 } from '@react-email/components';
 
 interface InviteEmailProps {
   inviterName: string;
   inviterArchetype: string;
+  inviterTopGifts: Array<{ name: string; strength: number }>;
   customMessage?: string;
   inviteUrl: string;
-  archetypeImageUrl: string;
 }
 
 export const InviteEmail = ({
   inviterName,
   inviterArchetype,
+  inviterTopGifts,
   customMessage,
   inviteUrl,
-  archetypeImageUrl,
 }: InviteEmailProps) => {
   return (
     <Html>
@@ -34,19 +33,22 @@ export const InviteEmail = ({
             
             {/* Inviter's Message */}
             <Text style={paragraph}>
-              {inviterName} has invited you to discover your spiritual gifts! They recently completed our assessment and discovered their Spiritual Power Archetype:
+              {inviterName} has invited you to discover your spiritual gifts! They recently completed our assessment and discovered their Spiritual Power Archetype: <strong>{inviterArchetype}</strong>
             </Text>
             
-            {/* Archetype Image */}
-            <div style={imageContainer}>
-              <Img 
-                src={archetypeImageUrl}
-                alt={`${inviterName}'s Spiritual Power Archetype: ${inviterArchetype}`}
-                width="400"
-                height="400"
-                style={image}
-              />
-            </div>
+            {/* Inviter's Top Gifts */}
+            <Section style={messageSection}>
+              <Text style={messageText}>
+                {inviterName}&apos;s Top Spiritual Gifts:
+              </Text>
+              <ul style={list}>
+                {inviterTopGifts.map((gift, index) => (
+                  <li key={index} style={giftItem}>
+                    <strong>{gift.name}</strong> - {gift.strength}% strength
+                  </li>
+                ))}
+              </ul>
+            </Section>
 
             {/* Custom Message */}
             {customMessage && (
@@ -60,7 +62,6 @@ export const InviteEmail = ({
                     &ldquo;{customMessage}&rdquo;
                   </Text>
                 </Section>
-                <Hr style={divider} />
               </>
             )}
             
@@ -136,17 +137,6 @@ const paragraph = {
   marginBottom: '16px',
 };
 
-const imageContainer = {
-  margin: '32px 0',
-  textAlign: 'center' as const,
-};
-
-const image = {
-  borderRadius: '8px',
-  maxWidth: '100%',
-  height: 'auto',
-};
-
 const messageSection = {
   backgroundColor: '#f8fafc',
   padding: '24px',
@@ -205,4 +195,9 @@ const footer = {
   color: '#718096',
   textAlign: 'center' as const,
   marginTop: '32px',
+};
+
+const giftItem = {
+  marginBottom: '8px',
+  color: '#4a5568',
 }; 

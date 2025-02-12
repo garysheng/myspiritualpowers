@@ -3,8 +3,7 @@ import { Resend } from 'resend';
 import { InviteEmail } from '@/components/email/invite-email';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase-admin/auth';
-import { getApp } from 'firebase-admin/app';
+import { auth } from '@/lib/firebase-admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -28,8 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify the token using Firebase Admin
-    const app = getApp();
-    const decodedToken = await getAuth(app).verifyIdToken(token);
+    const decodedToken = await auth.verifyIdToken(token);
     if (!decodedToken) {
       return NextResponse.json(
         { error: 'Invalid token' },
@@ -58,8 +56,7 @@ export async function POST(req: NextRequest) {
 
     const quizResult = userDoc.data();
     const inviteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}?ref=${decodedToken.uid}`;
-    const archetypeImageUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/images/archetypes/${quizResult.archetype.toLowerCase()}.png`;
-
+    
     // Send emails in batches of 50 to avoid rate limits
     const batchSize = 50;
     const results = [];
@@ -74,10 +71,10 @@ export async function POST(req: NextRequest) {
             subject: `${decodedToken.name || 'Someone'} invited you to discover your spiritual gifts!`,
             react: InviteEmail({
               inviterName: decodedToken.name || 'Someone',
-              inviterArchetype: quizResult.archetype,
+              inviterArchetype: quizResult.spiritualArchetype?.name || 'Spiritual Seeker',
+              inviterTopGifts: quizResult.spiritualGifts?.slice(0, 3) || [],
               customMessage,
               inviteUrl,
-              archetypeImageUrl,
             }),
           });
           return { email, status: 'success', data };
