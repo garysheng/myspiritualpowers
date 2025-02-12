@@ -18,6 +18,8 @@ export const AnalyticsEvents = {
   COMMUNITY_CTA_CLICKED: 'community_cta_clicked',
   RESULTS_RATED: 'results_rated',
   BIBLE_REFERENCE_CLICKED: 'bible_reference_clicked',
+  WELCOME_NEXT: 'welcome_next',
+  WELCOME_BACK: 'welcome_back',
 } as const;
 
 export type AnalyticsEvent = typeof AnalyticsEvents[keyof typeof AnalyticsEvents];
