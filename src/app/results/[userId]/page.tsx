@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
 import { FloatingRating } from '@/components/rating/floating-rating';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
+import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass, Users } from 'lucide-react';
 import Image from 'next/image';
 
 export default function ResultsPage() {
@@ -142,9 +143,12 @@ export default function ResultsPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
             <CardHeader className="flex flex-col items-center justify-center">
               <CardTitle className="text-center space-y-4">
-                <h1 className="text-lg text-white/90">
-                  Your Spiritual Power Archetype
-                </h1>
+                <div className="flex items-center justify-center gap-2">
+                  <Sparkles className="w-6 h-6 text-violet-400" />
+                  <h1 className="text-lg text-white/90">
+                    Your Spiritual Power Archetype
+                  </h1>
+                </div>
                 
                 <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
                   {results.spiritualArchetype.name}
@@ -184,10 +188,13 @@ export default function ResultsPage() {
 
         {/* Spiritual Gifts Card */}
         <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10" />
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
           <CardHeader>
-            <CardTitle className="text-4xl text-center font-bold bg-gradient-to-r from-indigo-500 via-primary to-violet-500 bg-clip-text text-transparent">
-              Your Top Spiritual Powers
+            <CardTitle className="flex items-center justify-center gap-2">
+              <Zap className="w-6 h-6 text-violet-400" />
+              <span className="text-4xl text-center font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                Your Top Spiritual Powers
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8 relative">
@@ -275,16 +282,19 @@ export default function ResultsPage() {
         {/* Personalized Insights Card */}
         {results?.personalizedInsights && (
           <Card className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-primary/5 to-cyan-500/10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
             <CardHeader>
-              <CardTitle className="text-4xl text-center font-bold bg-gradient-to-r from-blue-500 via-primary to-cyan-500 bg-clip-text text-transparent">
-                Personalized Insights
+              <CardTitle className="flex items-center justify-center gap-2">
+                <Brain className="w-6 h-6 text-violet-400" />
+                <span className="text-4xl text-center font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                  Personalized Insights
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 relative">
               <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm space-y-3">
                 <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                  <Target className="w-5 h-5 text-violet-400" />
                   Summary
                 </h3>
                 <p className="text-lg leading-relaxed">
@@ -294,7 +304,7 @@ export default function ResultsPage() {
               
               <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm space-y-3">
                 <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-cyan-500" />
+                  <Book className="w-5 h-5 text-violet-400" />
                   Strengths & Areas for Growth
                 </h3>
                 <p className="text-lg leading-relaxed">
@@ -305,13 +315,13 @@ export default function ResultsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-secondary/20 p-6 rounded-lg backdrop-blur-sm space-y-3">
                   <h3 className="text-xl font-semibold flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+                    <GraduationCap className="w-5 h-5 text-violet-400" />
                     Recommended Ministries
                   </h3>
                   <ul className="space-y-2 text-lg">
                     {results.personalizedInsights.recommendedMinistries.map((ministry, index) => (
                       <li key={index} className="flex items-start gap-2">
-                        <span className="text-blue-500/80">•</span>
+                        <span className="text-violet-400/80">•</span>
                         <span className="text-muted-foreground">{ministry}</span>
                       </li>
                     ))}
@@ -319,13 +329,13 @@ export default function ResultsPage() {
                 </div>
                 <div className="bg-secondary/20 p-6 rounded-lg backdrop-blur-sm space-y-3">
                   <h3 className="text-xl font-semibold flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyan-500" />
+                    <Compass className="w-5 h-5 text-violet-400" />
                     Growth Areas
                   </h3>
                   <ul className="space-y-2 text-lg">
                     {results.personalizedInsights.growthAreas.map((area, index) => (
                       <li key={index} className="flex items-start gap-2">
-                        <span className="text-cyan-500/80">•</span>
+                        <span className="text-violet-400/80">•</span>
                         <span className="text-muted-foreground">{area}</span>
                       </li>
                     ))}
@@ -338,14 +348,17 @@ export default function ResultsPage() {
 
         {/* Community Card */}
         <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-primary/10 to-indigo-900/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
           <CardContent className="space-y-8 relative py-8">
             <div className="text-center space-y-6">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground font-medium">This quiz was brought to you by</p>
-                <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
-                  TRUTH IN THE WYLD
-                </h2>
+                <div className="flex items-center justify-center gap-2">
+                  <Users className="w-6 h-6 text-violet-400" />
+                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                    TRUTH IN THE WYLD
+                  </h2>
+                </div>
               </div>
               
               <div className="max-w-2xl mx-auto space-y-6">
