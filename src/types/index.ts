@@ -27,6 +27,8 @@ export interface QuizResultBackend {
   spiritualGifts: SpiritualGift[];
   llmProvider: 'gemini' | 'deepseek';
   rawLlmResponse: string;
+  spiritualArchetype: SpiritualArchetype;
+  personalizedInsights: PersonalizedInsights;
 }
 
 // Frontend Types
@@ -40,6 +42,20 @@ export interface SpiritualGift {
   strength: number; // 0-100
   biblicalReferences: string[];
   practicalApplications: string[];
+}
+
+export interface SpiritualArchetype {
+  name: string;
+  description: string;
+  biblicalExample: string;
+  modernApplication: string;
+}
+
+export interface PersonalizedInsights {
+  summary: string;
+  strengthsAndWeaknesses: string;
+  recommendedMinistries: string[];
+  growthAreas: string[];
 }
 
 // Firebase types placeholder - will be properly imported from firebase
