@@ -30,7 +30,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   };
 
   return (
-    <Card className="w-full max-w-3xl relative overflow-hidden bg-black/90 max-h-[90vh] flex flex-col sm:rounded-lg rounded-none">
+    <Card className="w-full max-w-3xl relative overflow-hidden bg-black/90 max-h-[90vh] flex flex-col rounded-2xl">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-primary/3 to-indigo-500/5" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(120,119,198,0.05),transparent_50%)]" />
