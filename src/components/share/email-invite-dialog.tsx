@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
-import { X, Upload, Loader2 } from 'lucide-react';
+import { X, Upload, Loader2, Link as LinkIcon, Check, Copy } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { auth } from '@/lib/firebase';
+import { useAuth } from '@/contexts/auth-context';
+import Link from 'next/link';
 
 interface EmailInviteDialogProps {
   open: boolean;
@@ -21,10 +23,12 @@ const MAX_EMAILS = 200;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps) {
+  const { user } = useAuth();
   const [emails, setEmails] = useState<EmailPill[]>([]);
   const [currentInput, setCurrentInput] = useState('');
   const [customMessage, setCustomMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -181,6 +185,36 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
     }
   };
 
+  const handleCopyReferralLink = async () => {
+    if (!user?.uid) return;
+    
+    const referralLink = `${window.location.origin}/?ref=${user.uid}`;
+    
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setIsLinkCopied(true);
+      trackEvent(AnalyticsEvents.RESULTS_SHARED, { 
+        platform: 'referral_link',
+        type: 'copy'
+      });
+      toast({
+        title: "Link copied!",
+        description: "Your custom invite link has been copied to clipboard.",
+      });
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsLinkCopied(false);
+      }, 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Could not copy the link to your clipboard.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
@@ -229,6 +263,36 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
             </div>
           </div>
 
+          {/* Divider with text */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-muted"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or share via link</span>
+            </div>
+          </div>
+
+          {/* Custom Referral Link Button */}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleCopyReferralLink}
+            disabled={!user}
+          >
+            {isLinkCopied ? (
+              <>
+                <Check className="mr-2 h-4 w-4 text-green-500" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <LinkIcon className="mr-2 h-4 w-4" />
+                Copy Custom Invite Link
+              </>
+            )}
+          </Button>
+
           {/* CSV Upload */}
           <div>
             <input
@@ -248,14 +312,12 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
             </Button>
           </div>
 
-          {/* Custom Message */}
+          {/* Personal Message */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Add a Personal Message (Optional)
-            </label>
+            <h3 className="text-lg font-medium">Add a Personal Message (Optional)</h3>
             <Textarea
               value={customMessage}
-              onChange={e => setCustomMessage(e.target.value)}
+              onChange={(e) => setCustomMessage(e.target.value)}
               placeholder="Write a personal message to include in the invitation..."
               className="min-h-[100px]"
             />
