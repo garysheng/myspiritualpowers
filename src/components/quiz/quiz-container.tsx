@@ -304,17 +304,19 @@ export function QuizContainer() {
       <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 relative">
         <WelcomeScreen onStart={handleStart} />
         
-        {/* Login Button */}
-        <div className="fixed bottom-4 right-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-primary text-sm"
-            onClick={handleLogin}
-          >
-            <LogIn className="w-4 h-4 mr-2" />
-            Already took the quiz? Log in
-          </Button>
+        {/* Login Button with subtle container */}
+        <div className="fixed bottom-4 w-full max-w-3xl mx-auto px-4">
+          <div className="bg-secondary/30 backdrop-blur-sm rounded-lg p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-muted-foreground hover:text-primary text-sm"
+              onClick={handleLogin}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Already took the quiz? Log in
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -326,24 +328,24 @@ export function QuizContainer() {
         <LoaderOverlay message="Analyzing your spiritual gifts... This may take a moment." />
       )}
 
-      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 space-y-8">
-        <Card className="w-full max-w-2xl p-6 space-y-6 relative overflow-hidden">
+      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-2 sm:p-4 space-y-4 sm:space-y-8">
+        <Card className="w-full max-w-2xl p-2 pb-0 sm:p-6 space-y-2 sm:space-y-6 relative overflow-hidden max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-6rem)] flex flex-col">
           {/* Add semi-transparent dark backdrop */}
           <div className="absolute inset-0 bg-background/95 backdrop-blur-xl" />
           
           {/* Make content relative to appear above the backdrop */}
-          <div className="relative space-y-6">
+          <div className="relative space-y-2 sm:space-y-6 overflow-y-auto flex-1">
             {/* Progress indicator */}
-            <div className="space-y-2">
+            <div className="space-y-1 sm:space-y-2">
               {/* Question counter */}
-              <div className="flex justify-between items-center text-sm text-muted-foreground">
+              <div className="flex justify-between items-center text-xs sm:text-sm text-muted-foreground">
                 <span>
                   Question {(levelInfo?.questionIndexInLevel ?? 0) + 1} of {levelInfo?.questionsInLevel ?? 0} in {levelInfo?.levelName ?? ''}
                 </span>
               </div>
 
               {/* Overall progress bars */}
-              <div className="flex gap-1 h-1">
+              <div className="flex gap-0.5 sm:gap-1 h-1">
                 {LEVELS.map((level, index) => {
                   const levelStart = LEVELS.slice(0, index).reduce((sum, l) => sum + l.questions, 0);
                   const levelEnd = levelStart + level.questions;
@@ -370,18 +372,18 @@ export function QuizContainer() {
             </div>
 
             {/* Question content */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold min-h-[8rem] flex items-center">
+            <div className="space-y-3 sm:space-y-6">
+              <h2 className="text-lg sm:text-2xl font-semibold min-h-[4rem] sm:min-h-[8rem] flex items-center">
                 {currentQuestion.text}
               </h2>
 
               {/* Caption for answer options */}
-              <p className="text-sm text-muted-foreground italic">
+              <p className="text-xs sm:text-sm text-muted-foreground italic">
                 This statement resonates with me...
               </p>
 
               {/* Answer options */}
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-1.5 sm:gap-3">
                 {[...currentQuestion.options].reverse().map((option, index) => {
                   const keyNumber = index + 1;
                   const optionLabels = [
@@ -414,7 +416,7 @@ export function QuizContainer() {
                       key={option.id}
                       onClick={() => handleAnswer(option.value, option.id)}
                       disabled={isAnimating}
-                      className={`group relative p-4 text-center rounded-lg border-2 transition-all duration-200 ${selectedOptionId === option.id
+                      className={`group relative p-2 sm:p-4 text-center rounded-lg border-2 transition-all duration-200 ${selectedOptionId === option.id
                           ? 'scale-95 transform'
                           : progress.responses[currentQuestion.id] === option.value
                             ? selectedClasses
@@ -422,7 +424,7 @@ export function QuizContainer() {
                         } ${isAnimating ? 'cursor-not-allowed' : 'cursor-pointer'
                         }`}
                     >
-                      <span className="flex items-center justify-center h-full min-h-[2.5rem]">
+                      <span className="flex items-center justify-center h-full min-h-[2rem] sm:min-h-[2.5rem]">
                         <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
                           }`}>
                           {optionLabels[index]}
@@ -446,12 +448,12 @@ export function QuizContainer() {
             </div>
 
             {/* Navigation controls */}
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex justify-between items-center py-1.5 sm:py-4 sticky bottom-0 bg-background/80 backdrop-blur-sm border-t sm:border-t-0">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={isFirstQuestion}
-                className="flex items-center gap-2"
+                className="h-8 sm:h-10 px-2.5 sm:px-4 text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
@@ -461,7 +463,7 @@ export function QuizContainer() {
                 <Button
                   onClick={handleComplete}
                   disabled={!hasAnswer}
-                  className="flex items-center gap-2"
+                  className="h-8 sm:h-10 px-2.5 sm:px-4 text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
                 >
                   Complete & Get Results
                 </Button>
@@ -469,7 +471,7 @@ export function QuizContainer() {
                 <Button
                   onClick={handleNext}
                   disabled={!hasAnswer}
-                  className="flex items-center gap-2"
+                  className="h-8 sm:h-10 px-2.5 sm:px-4 text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -480,7 +482,7 @@ export function QuizContainer() {
         </Card>
 
         {/* Keyboard shortcuts help */}
-        <div className="text-sm text-muted-foreground text-center space-y-2">
+        <div className="hidden sm:block text-sm text-muted-foreground text-center space-y-2 mb-0 sm:mb-8">
           <div>
             <p>Use number keys (1-4) to select answers</p>
             <p>Use arrow keys (←/→) to navigate between questions</p>
