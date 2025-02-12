@@ -3,28 +3,50 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Sparkles } from 'lucide-react';
 
 export function Header() {
   const pathname = usePathname();
   const isQuizPage = pathname === '/quiz';
 
   return (
-    <header className="border-b">
+    <header className="sticky top-0 z-50 backdrop-blur-sm border-b bg-background/80 supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="font-bold text-xl">
-          MySpiritualPowers.com
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 group"
+        >
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
+            <div className="relative flex items-center gap-2 px-2 py-1 bg-background rounded-lg ring-1 ring-gray-900/5">
+              <Sparkles className="w-5 h-5 text-primary" />
+              <span className="font-bold text-xl bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+                MySpiritualPowers.com
+              </span>
+            </div>
+          </div>
         </Link>
 
         <nav className="flex items-center gap-6">
           <Link 
             href="/" 
-            className={pathname === '/' ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}
+            className={`relative ${
+              pathname === '/' 
+                ? 'text-primary font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-full' 
+                : 'text-muted-foreground hover:text-foreground transition-colors'
+            }`}
           >
             Home
           </Link>
           {!isQuizPage && (
             <Link href="/quiz">
-              <Button>Take the Quiz</Button>
+              <Button 
+                className="relative group"
+                size="sm"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
+                <span className="relative">Take the Quiz</span>
+              </Button>
             </Link>
           )}
         </nav>
