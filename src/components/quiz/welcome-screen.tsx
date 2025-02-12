@@ -123,7 +123,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                   <div className="w-3 h-3 rounded-full bg-primary/40 mt-2" />
                   <div>
                     <span className="font-medium text-lg">Not Really</span>
-                    <p className="text-muted-foreground">I don't identify with this statement</p>
+                    <p className="text-muted-foreground">I don&apos;t identify with this statement</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-secondary/40 transition-colors">
