@@ -3,18 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, User } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
-import { auth } from '@/lib/firebase';
+import Image from 'next/image';
 
 export function Header() {
   const pathname = usePathname();
   const isQuizPage = pathname === '/quiz';
   const { user } = useAuth();
-
-  const handleSignOut = async () => {
-    await auth.signOut();
-  };
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-sm border-b bg-background/80 supports-[backdrop-filter]:bg-background/60">
@@ -47,13 +43,27 @@ export function Header() {
           </Link>
           {!isQuizPage && (
             user ? (
-              <Button 
-                variant="ghost"
-                onClick={handleSignOut}
-                size="sm"
-              >
-                Sign Out
-              </Button>
+              <Link href="/profile">
+                {user.photoURL ? (
+                  <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
+                    <Image
+                      src={user.photoURL}
+                      alt="Profile"
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-8 h-8 rounded-full"
+                  >
+                    <User className="w-4 h-4" />
+                  </Button>
+                )}
+              </Link>
             ) : (
               <Link href="/quiz">
                 <Button 

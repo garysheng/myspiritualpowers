@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Mail } from 'lucide-react';
+import { Users, Mail, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { UserProfile } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmailInviteDialog } from '@/components/share/email-invite-dialog';
@@ -19,6 +19,11 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await auth.signOut();
+    router.push('/');
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -65,20 +70,30 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              {user.photoURL && (
-                <Image
-                  src={user.photoURL}
-                  alt={user.displayName || 'Profile picture'}
-                  width={80}
-                  height={80}
-                  className="rounded-full"
-                />
-              )}
-              <div>
-                <h1 className="text-2xl font-bold">{user.displayName}</h1>
-                <p className="text-muted-foreground">{user.email}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                {user.photoURL && (
+                  <Image
+                    src={user.photoURL}
+                    alt={user.displayName || 'Profile picture'}
+                    width={80}
+                    height={80}
+                    className="rounded-full"
+                  />
+                )}
+                <div>
+                  <h1 className="text-2xl font-bold">{user.displayName}</h1>
+                  <p className="text-muted-foreground">{user.email}</p>
+                </div>
               </div>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleSignOut}
+                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
             </div>
           </CardContent>
         </Card>
