@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, Upload, Loader2, Link as LinkIcon, Check, Copy } from 'lucide-react';
+import { X, Upload, Loader2, Link as LinkIcon, Check } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { auth } from '@/lib/firebase';
 import { useAuth } from '@/contexts/auth-context';
-import Link from 'next/link';
 
 interface EmailInviteDialogProps {
   open: boolean;
@@ -209,7 +208,7 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
     } catch (err) {
       toast({
         title: "Failed to copy",
-        description: "Could not copy the link to your clipboard.",
+        description: "Could not copy the link to your clipboard." + err,
         variant: "destructive",
       });
     }
