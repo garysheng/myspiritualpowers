@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -9,7 +9,7 @@ import { QuizProgress } from '@/types';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { WelcomeScreen } from './welcome-screen';
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup, sendEmailVerification } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { db } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { analyzeSpiritualGifts } from '@/lib/analyze-spiritual-gifts';
@@ -73,13 +73,6 @@ export function QuizContainer() {
     };
   });
 
-  // Save progress to localStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-    }
-  }, [progress]);
-
   const currentQuestion = QUESTIONS[progress.currentQuestionIndex];
   const hasAnswer = progress.responses[currentQuestion.id] !== undefined;
   const isFirstQuestion = progress.currentQuestionIndex === 0;
@@ -88,46 +81,38 @@ export function QuizContainer() {
   // Get current level information
   const levelInfo = getCurrentLevelInfo(progress.currentQuestionIndex);
 
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    if (!hasStarted) return;
+  const handleNext = useCallback(() => {
+    if (!isLastQuestion) {
+      setProgress(prev => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1,
+        lastUpdateTime: new Date(),
+      }));
+    }
+  }, [isLastQuestion]);
 
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Only handle number keys 1-4
-      if (e.key >= '1' && e.key <= '4') {
-        const optionIndex = parseInt(e.key) - 1; // Map directly to index (1=first option)
-        const option = [...currentQuestion.options].reverse()[optionIndex];
-        if (option) {
-          handleAnswer(option.value, option.id);
-        }
-      }
-      // Handle left/right arrow keys for navigation
-      else if (e.key === 'ArrowLeft' && !isFirstQuestion) {
-        handlePrevious();
-      }
-      else if (e.key === 'ArrowRight' && !isLastQuestion && hasAnswer) {
-        handleNext();
-      }
-    };
+  const handlePrevious = useCallback(() => {
+    if (!isFirstQuestion) {
+      setProgress(prev => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex - 1,
+        lastUpdateTime: new Date(),
+      }));
+    }
+  }, [isFirstQuestion]);
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [hasStarted, currentQuestion, isFirstQuestion, isLastQuestion, hasAnswer]);
-
-  const handleAnswer = async (value: number, optionId: string) => {
-    if (isAnimating) return; // Prevent multiple selections during animation
+  const handleAnswer = useCallback(async (value: number, optionId: string) => {
+    if (isAnimating) return;
 
     setSelectedOptionId(optionId);
     setIsAnimating(true);
 
-    // Track the answer
     trackEvent(AnalyticsEvents.QUESTION_ANSWERED, {
       questionId: currentQuestion.id,
       answer: value,
       category: currentQuestion.category,
     });
 
-    // Update responses immediately
     const newResponses = {
       ...progress.responses,
       [currentQuestion.id]: value,
@@ -139,36 +124,45 @@ export function QuizContainer() {
       lastUpdateTime: new Date(),
     }));
 
-    // Wait for animation before navigating
     await new Promise(resolve => setTimeout(resolve, 300));
     setIsAnimating(false);
     setSelectedOptionId(null);
 
-    // Only auto-advance if it's not the last question
     if (!isLastQuestion) {
       handleNext();
     }
-  };
+  }, [isAnimating, currentQuestion, isLastQuestion, progress.responses, handleNext]);
 
-  const handlePrevious = () => {
-    if (!isFirstQuestion) {
-      setProgress(prev => ({
-        ...prev,
-        currentQuestionIndex: prev.currentQuestionIndex - 1,
-        lastUpdateTime: new Date(),
-      }));
-    }
-  };
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    if (!hasStarted) return;
 
-  const handleNext = () => {
-    if (!isLastQuestion) {
-      setProgress(prev => ({
-        ...prev,
-        currentQuestionIndex: prev.currentQuestionIndex + 1,
-        lastUpdateTime: new Date(),
-      }));
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key >= '1' && e.key <= '4') {
+        const optionIndex = parseInt(e.key) - 1;
+        const option = [...currentQuestion.options].reverse()[optionIndex];
+        if (option) {
+          handleAnswer(option.value, option.id);
+        }
+      }
+      else if (e.key === 'ArrowLeft' && !isFirstQuestion) {
+        handlePrevious();
+      }
+      else if (e.key === 'ArrowRight' && !isLastQuestion && hasAnswer) {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [hasStarted, currentQuestion, isFirstQuestion, isLastQuestion, hasAnswer, handleAnswer, handleNext, handlePrevious]);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     }
-  };
+  }, [progress]);
 
   const handleStart = () => {
     setHasStarted(true);
@@ -182,7 +176,7 @@ export function QuizContainer() {
   const handleComplete = async () => {
     try {
       setIsAnalyzing(true);
-      
+
       // Sign in with Google
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -219,9 +213,32 @@ export function QuizContainer() {
         rawLlmResponse: llmAnalysis.rawResponse,
         spiritualArchetype: llmAnalysis.archetype,
         personalizedInsights: llmAnalysis.insights,
+        // Only store display name and photo URL if they differ from Firebase Auth
+        ...(user.displayName !== null && { displayName: user.displayName }),
+        ...(user.photoURL !== null && { photoURL: user.photoURL }),
       };
 
       await setDoc(doc(db, 'quiz_results', user.uid), quizResult);
+
+      // Send results email
+      try {
+        await fetch('/api/send-results', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: user.email,
+            userId: user.uid,
+            spiritualGifts: sortedGifts,
+            spiritualArchetype: llmAnalysis.archetype,
+            personalizedInsights: llmAnalysis.insights,
+          }),
+        });
+      } catch (emailError) {
+        console.error('Error sending results email:', emailError);
+        // Continue with redirect even if email fails
+      }
 
       // Redirect to results page
       window.location.href = `/results/${user.uid}`;
@@ -245,7 +262,7 @@ export function QuizContainer() {
       {isAnalyzing && (
         <LoaderOverlay message="Analyzing your spiritual gifts... This may take a moment." />
       )}
-      
+
       <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 space-y-8">
         <Card className="w-full max-w-2xl p-6 space-y-6">
           {/* Progress indicator */}
@@ -256,7 +273,7 @@ export function QuizContainer() {
                 Question {(levelInfo?.questionIndexInLevel ?? 0) + 1} of {levelInfo?.questionsInLevel ?? 0} in {levelInfo?.levelName ?? ''}
               </span>
             </div>
-            
+
             {/* Overall progress bars */}
             <div className="flex gap-1 h-1">
               {LEVELS.map((level, index) => {
@@ -264,19 +281,18 @@ export function QuizContainer() {
                 const levelEnd = levelStart + level.questions;
                 const isCurrentLevel = progress.currentQuestionIndex >= levelStart && progress.currentQuestionIndex < levelEnd;
                 const isCompletedLevel = progress.currentQuestionIndex >= levelEnd;
-                const progressInThisLevel = isCompletedLevel ? 100 : 
+                const progressInThisLevel = isCompletedLevel ? 100 :
                   isCurrentLevel ? ((progress.currentQuestionIndex - levelStart) / level.questions) * 100 : 0;
-                
+
                 return (
-                  <div 
+                  <div
                     key={index}
                     className="flex-1 bg-secondary rounded-full overflow-hidden"
                   >
-                    <div 
-                      className={`h-full transition-all duration-300 ${
-                        isCompletedLevel ? 'bg-primary/40' :
-                        isCurrentLevel ? 'bg-primary' : 'bg-secondary'
-                      }`}
+                    <div
+                      className={`h-full transition-all duration-300 ${isCompletedLevel ? 'bg-primary/40' :
+                          isCurrentLevel ? 'bg-primary' : 'bg-secondary'
+                        }`}
                       style={{ width: `${progressInThisLevel}%` }}
                     />
                   </div>
@@ -324,31 +340,27 @@ export function QuizContainer() {
                   'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500 dark:border-indigo-500', // Strongly
                   'bg-violet-100 dark:bg-violet-900/50 border-violet-600 dark:border-violet-400', // Very Strongly
                 ][index];
-                
+
                 return (
                   <button
                     key={option.id}
                     onClick={() => handleAnswer(option.value, option.id)}
                     disabled={isAnimating}
-                    className={`group relative p-4 text-center rounded-lg border-2 transition-all duration-200 ${
-                      selectedOptionId === option.id
+                    className={`group relative p-4 text-center rounded-lg border-2 transition-all duration-200 ${selectedOptionId === option.id
                         ? 'scale-95 transform'
                         : progress.responses[currentQuestion.id] === option.value
-                        ? selectedClasses
-                        : `${intensityClasses} hover:scale-105`
-                    } ${
-                      isAnimating ? 'cursor-not-allowed' : 'cursor-pointer'
-                    }`}
+                          ? selectedClasses
+                          : `${intensityClasses} hover:scale-105`
+                      } ${isAnimating ? 'cursor-not-allowed' : 'cursor-pointer'
+                      }`}
                   >
                     <span className="flex items-center justify-center h-full min-h-[2.5rem]">
-                      <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${
-                        selectedOptionId === option.id ? 'opacity-0' : ''
-                      }`}>
+                      <span className={`${fontWeights} group-hover:opacity-0 transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : ''
+                        }`}>
                         {optionLabels[index]}
                       </span>
-                      <span className={`text-sm text-muted-foreground transition-opacity absolute ${
-                        selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
-                      }`}>
+                      <span className={`text-sm text-muted-foreground transition-opacity absolute ${selectedOptionId === option.id ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
+                        }`}>
                         Press {keyNumber}
                       </span>
                       {selectedOptionId === option.id && (

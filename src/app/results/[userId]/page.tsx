@@ -3,17 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { QuizResultBackend, SpiritualGift } from '@/types';
 import { calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-questions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
+import { ShareBar } from '@/components/share/share-bar';
 
 export default function ResultsPage() {
   const { userId } = useParams();
-  const { user, loading: authLoading, signInWithGoogle } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<QuizResultBackend | null>(null);
@@ -23,18 +23,6 @@ export default function ResultsPage() {
     async function fetchResults() {
       try {
         if (authLoading) return;
-        
-        if (!user) {
-          setLoading(false);
-          return;
-        }
-
-        // Only allow users to view their own results
-        if (user.uid !== userId) {
-          setError('You can only view your own results');
-          setLoading(false);
-          return;
-        }
 
         const resultDoc = await getDoc(doc(db, 'quiz_results', userId as string));
         
@@ -45,23 +33,26 @@ export default function ResultsPage() {
         }
 
         const resultData = resultDoc.data() as QuizResultBackend;
-        setResults(resultData);
-
-        console.log('Raw result data:', resultData);
-        console.log('Responses:', resultData.responses);
+        
+        // If this is the current user's results and they're logged in,
+        // use their current Firebase Auth data for display name and photo
+        const shouldUseAuthData = user && user.uid === userId;
+        const finalResultData = {
+          ...resultData,
+          displayName: shouldUseAuthData && user.displayName ? user.displayName : resultData.displayName,
+          photoURL: shouldUseAuthData && user.photoURL ? user.photoURL : resultData.photoURL,
+        };
+        
+        setResults(finalResultData);
 
         // Convert responses array to Record<string, number>
         const responseRecord: Record<string, number> = {};
-        resultData.responses.forEach(response => {
+        finalResultData.responses.forEach(response => {
           responseRecord[response.questionId] = parseInt(response.selectedOptionId);
         });
 
-        console.log('Response record:', responseRecord);
-
         // Calculate gift scores
         const scores = calculateGiftScores(responseRecord);
-        
-        console.log('Gift scores:', scores);
         
         // Sort gifts by score and take top 5
         const sortedGifts = Object.entries(scores)
@@ -82,7 +73,7 @@ export default function ResultsPage() {
     }
 
     fetchResults();
-  }, [userId, user, authLoading]);
+  }, [userId, authLoading, user]);
 
   if (authLoading || loading) {
     return (
@@ -95,23 +86,6 @@ export default function ResultsPage() {
             ))}
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-[calc(100svh-4rem)] flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl">Sign in to View Results</CardTitle>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <Button onClick={signInWithGoogle} size="lg">
-              Sign in with Google
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -129,13 +103,31 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100svh-4rem)] p-4">
+    <div className="min-h-[calc(100svh-4rem)] p-4 pb-40">
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* Profile Section */}
+        {results && (
+          <div className="flex items-center justify-center gap-4 mb-8">
+            {results.photoURL && (
+              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
+                <img 
+                  src={results.photoURL} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+              Spiritual Powers Quiz Results for {results.displayName}
+            </h1>
+          </div>
+        )}
+
         {/* Spiritual Archetype Card */}
         {results?.spiritualArchetype && (
           <Card className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
-            <CardHeader>
+            <CardHeader className="flex flex-col items-center justify-center">
               <CardTitle className="text-4xl text-center font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
                 Your Spiritual Power Archetype
               </CardTitle>
@@ -319,6 +311,19 @@ export default function ResultsPage() {
           </Card>
         )}
       </div>
+
+      {/* Share Bar */}
+      {results && (
+        <ShareBar 
+          userId={userId as string} 
+          spiritualArchetype={results.spiritualArchetype.name}
+          spiritualGifts={spiritualGifts}
+          displayName={results.displayName}
+          photoURL={results.photoURL}
+          biblicalExample={results.spiritualArchetype.biblicalExample}
+          modernApplication={results.spiritualArchetype.modernApplication}
+        />
+      )}
     </div>
   );
 } 

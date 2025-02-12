@@ -33,6 +33,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             <li>Takes approximately 20-25 minutes to complete</li>
             <li>Identifies your top spiritual gifts with biblical references</li>
             <li>Provides practical ways to use your gifts</li>
+            <li>You&apos;ll receive personalized insights</li>
           </ul>
         </div>
 
@@ -43,7 +44,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             <li>More - This is definitely true for me</li>
             <li>Some - This is sometimes true for me</li>
             <li>A Little - This is occasionally true for me</li>
-            <li>Not at all - This doesn't describe me</li>
+            <li>Not at all - This doesn&apos;t describe me</li>
           </ul>
         </div>
       </CardContent>

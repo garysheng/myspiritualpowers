@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export interface QuizQuestion {
   id: string;
   text: string;
@@ -20,20 +22,34 @@ export interface QuizResponse {
 
 // Backend Types (Firestore)
 export interface QuizResultBackend {
-  id: string;
-  userId?: string;
-  responses: QuizResponse[];
-  timestamp: FirebaseTimestamp;
+  userId: string;
+  displayName: string;
+  photoURL?: string;
+  responses: Array<{
+    questionId: string;
+    selectedOptionId: string;
+  }>;
   spiritualGifts: SpiritualGift[];
-  llmProvider: 'gemini' | 'deepseek';
-  rawLlmResponse: string;
-  spiritualArchetype: SpiritualArchetype;
-  personalizedInsights: PersonalizedInsights;
+  spiritualArchetype: {
+    name: string;
+    description: string;
+    biblicalExample: string;
+    modernApplication: string;
+  };
+  personalizedInsights: {
+    summary: string;
+    strengthsAndWeaknesses: string;
+    recommendedMinistries: string[];
+    growthAreas: string[];
+  };
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 // Frontend Types
-export interface QuizResult extends Omit<QuizResultBackend, 'timestamp'> {
-  timestamp: Date;
+export interface QuizResult extends Omit<QuizResultBackend, 'createdAt' | 'updatedAt'> {
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SpiritualGift {
