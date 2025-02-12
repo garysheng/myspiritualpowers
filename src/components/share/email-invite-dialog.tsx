@@ -3,18 +3,13 @@ import { X, Upload, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
-import { useAuth } from '@/contexts/auth-context';
 import { auth } from '@/lib/firebase';
 
 interface EmailInviteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  spiritualArchetype: string;
-  displayName: string;
-  userId: string;
 }
 
 interface EmailPill {
@@ -25,8 +20,7 @@ interface EmailPill {
 const MAX_EMAILS = 200;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function EmailInviteDialog({ open, onOpenChange, spiritualArchetype, displayName, userId }: EmailInviteDialogProps) {
-  const { user } = useAuth();
+export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps) {
   const [emails, setEmails] = useState<EmailPill[]>([]);
   const [currentInput, setCurrentInput] = useState('');
   const [customMessage, setCustomMessage] = useState('');
@@ -115,7 +109,7 @@ export function EmailInviteDialog({ open, onOpenChange, spiritualArchetype, disp
     } catch (error) {
       toast({
         title: "Error reading file",
-        description: "There was an error reading your CSV file.",
+        description: "There was an error reading your CSV file." + error,
         variant: "destructive",
       });
     }
@@ -175,8 +169,8 @@ export function EmailInviteDialog({ open, onOpenChange, spiritualArchetype, disp
       });
 
       onOpenChange(false);
-    } catch (error) {
-      console.error('Error sending invites:', error);
+    } catch (err) {
+      console.error('Error sending invites:', err);
       toast({
         title: "Error sending invites",
         description: "There was an error sending the invitations. Please try again.",

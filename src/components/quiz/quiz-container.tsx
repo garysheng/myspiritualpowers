@@ -3,17 +3,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LogIn } from 'lucide-react';
 import { QUESTIONS, calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-questions';
 import { QuizProgress } from '@/types';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { WelcomeScreen } from './welcome-screen';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { analyzeSpiritualGifts } from '@/lib/analyze-spiritual-gifts';
 import { LoaderOverlay } from '@/components/ui/loader';
+import { useRouter } from 'next/navigation';
 
 const STORAGE_KEY = 'quiz_progress';
 
@@ -47,6 +47,7 @@ const getCurrentLevelInfo = (questionIndex: number) => {
 };
 
 export function QuizContainer() {
+  const router = useRouter();
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -202,6 +203,35 @@ export function QuizContainer() {
       // Get LLM analysis
       const llmAnalysis = await analyzeSpiritualGifts(responsesArray, sortedGifts);
 
+      // Check for referral from URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const referrerId = urlParams.get('ref');
+
+      // Create or update user profile
+      const userProfileRef = doc(db, 'user_profiles', user.uid);
+      const userProfileDoc = await getDoc(userProfileRef);
+      
+      if (!userProfileDoc.exists()) {
+        await setDoc(userProfileRef, {
+          userId: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          referredBy: referrerId,
+          referralCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        // If there's a referrer, increment their referral count
+        if (referrerId) {
+          const referrerProfileRef = doc(db, 'user_profiles', referrerId);
+          await updateDoc(referrerProfileRef, {
+            referralCount: increment(1),
+            updatedAt: new Date(),
+          });
+        }
+      }
+
       // Save quiz results to Firestore
       const quizResult = {
         userId: user.uid,
@@ -213,6 +243,7 @@ export function QuizContainer() {
         rawLlmResponse: llmAnalysis.rawResponse,
         spiritualArchetype: llmAnalysis.archetype,
         personalizedInsights: llmAnalysis.insights,
+        referredBy: referrerId,
         // Only store display name and photo URL if they differ from Firebase Auth
         ...(user.displayName !== null && { displayName: user.displayName }),
         ...(user.photoURL !== null && { photoURL: user.photoURL }),
@@ -241,7 +272,7 @@ export function QuizContainer() {
       }
 
       // Redirect to results page
-      window.location.href = `/results/${user.uid}`;
+      router.push(`/results/${user.uid}`);
     } catch (error) {
       console.error('Error completing quiz:', error);
       alert('There was an error saving your results. Please try again.');
@@ -249,10 +280,42 @@ export function QuizContainer() {
     }
   };
 
+  const handleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      // Check if user has already taken the quiz
+      const resultDoc = await getDoc(doc(db, 'quiz_results', result.user.uid));
+      if (resultDoc.exists()) {
+        // If they have results, redirect to their results page
+        router.push(`/results/${result.user.uid}`);
+      } else {
+        // If they haven't taken the quiz yet, start the quiz
+        setHasStarted(true);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  };
+
   if (!hasStarted) {
     return (
-      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4">
+      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4 relative">
         <WelcomeScreen onStart={handleStart} />
+        
+        {/* Login Button */}
+        <div className="fixed bottom-4 right-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-primary text-sm"
+            onClick={handleLogin}
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Already took the quiz? Log in
+          </Button>
+        </div>
       </div>
     );
   }

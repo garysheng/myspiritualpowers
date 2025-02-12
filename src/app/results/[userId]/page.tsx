@@ -10,6 +10,8 @@ import { calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-q
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
+import { FloatingRating } from '@/components/rating/floating-rating';
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import Image from 'next/image';
 
 export default function ResultsPage() {
@@ -19,6 +21,7 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<QuizResultBackend | null>(null);
   const [spiritualGifts, setSpiritualGifts] = useState<SpiritualGift[]>([]);
+  const [hasRated, setHasRated] = useState(false);
 
   useEffect(() => {
     async function fetchResults() {
@@ -45,6 +48,7 @@ export default function ResultsPage() {
         };
         
         setResults(finalResultData);
+        setHasRated(!!resultData.rating); // Check if user has already rated
 
         // Convert responses array to Record<string, number>
         const responseRecord: Record<string, number> = {};
@@ -105,6 +109,14 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-[calc(100svh-4rem)] p-4 pb-40">
+      {/* Show rating component only if this is the user's own results and they haven't rated yet */}
+      {user && user.uid === userId && !hasRated && (
+        <FloatingRating 
+          userId={userId as string} 
+          onRated={() => setHasRated(true)}
+        />
+      )}
+
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Section */}
         {results && (
@@ -129,15 +141,17 @@ export default function ResultsPage() {
           <Card className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
             <CardHeader className="flex flex-col items-center justify-center">
-              <CardTitle className="text-4xl text-center font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
-                Your Spiritual Power Archetype
+              <CardTitle className="text-center space-y-4">
+                <h1 className="text-lg text-white/90">
+                  Your Spiritual Power Archetype
+                </h1>
+                
+                <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                  {results.spiritualArchetype.name}
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 relative">
-              <div className="text-3xl font-bold text-center bg-gradient-to-r from-violet-500 to-indigo-500 bg-clip-text text-transparent">
-                {results.spiritualArchetype.name}
-              </div>
-              
               <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm">
                 <p className="text-lg leading-relaxed">
                   {results.spiritualArchetype.description}
@@ -232,14 +246,24 @@ export default function ResultsPage() {
                 </div>
 
                 {gift.biblicalReferences && gift.biblicalReferences.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="w-full text-sm font-medium text-muted-foreground mb-1">
+                      Biblical References:
+                    </div>
                     {gift.biblicalReferences.map((reference, i) => (
-                      <span 
+                      <a
                         key={i}
-                        className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary-foreground/80"
+                        href={`https://www.biblegateway.com/passage/?search=${encodeURIComponent(reference)}&version=NIV`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          trackEvent(AnalyticsEvents.BIBLE_REFERENCE_CLICKED, { reference });
+                        }}
                       >
                         {reference}
-                      </span>
+                      </a>
                     ))}
                   </div>
                 )}
@@ -311,6 +335,41 @@ export default function ResultsPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Community Card */}
+        <Card className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-primary/10 to-indigo-900/20" />
+          <CardContent className="space-y-8 relative py-8">
+            <div className="text-center space-y-6">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground font-medium">This quiz was brought to you by</p>
+                <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+                  TRUTH IN THE WYLD
+                </h2>
+              </div>
+              
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm">
+                  <p className="text-lg leading-relaxed">
+                    A sanctuary for Millennials and Gen Z seeking divine truth in an era of AI and rapid change. We&apos;re building a community where the metaphysical, emotionally intelligent, and counter-cultural can find guidance and solidarity.
+                  </p>
+                </div>
+
+                <div className="flex justify-center pt-4">
+                  <a 
+                    href="https://truthinthewyld.com?ref=myspiritualpowers.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent(AnalyticsEvents.COMMUNITY_CTA_CLICKED)}
+                    className="inline-flex items-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg hover:from-violet-500 hover:to-indigo-500 transition-all duration-200 shadow-lg hover:shadow-violet-500/25"
+                  >
+                    Join Our Community
+                  </a>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Share Bar */}

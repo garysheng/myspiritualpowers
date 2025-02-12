@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Gift, Book, Heart, Sparkles, Users, Star, Zap, Brain, Target } from 'lucide-react';
+import { ArrowRight, Book, Heart, Sparkles, Users, Star, Zap, Brain, Target } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -211,7 +211,7 @@ export default function HomePage() {
                   <div className={`absolute inset-0 bg-gradient-to-r ${testimonial.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
                   <div className="relative flex flex-col h-full">
                     <div className="flex-1">
-                      <div className={`text-6xl font-serif text-primary/10 absolute -top-4 -left-2`}>"</div>
+                      <div className={`text-6xl font-serif text-primary/10 absolute -top-4 -left-2`}>&quot;</div>
                       <p className="text-lg relative z-10 pt-2 text-muted-foreground">
                         {testimonial.quote}
                       </p>
@@ -233,30 +233,48 @@ export default function HomePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-24 px-4 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),rgba(0,0,0,0))]" />
-        <div className="max-w-4xl mx-auto text-center space-y-8 relative">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white mb-4">
-            <Sparkles className="w-4 h-4" />
-            <span>Begin Your Spiritual Journey Today</span>
+      <section className="py-32 px-4 bg-gradient-to-br from-violet-900 via-violet-800 to-indigo-900 text-white relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),rgba(0,0,0,0))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.1),rgba(0,0,0,0))]" />
+        <div className="absolute inset-0 bg-black/20" />
+        
+        <div className="relative">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 text-white backdrop-blur-sm border border-white/20 shadow-xl">
+              <Sparkles className="w-4 h-4" />
+              <span className="font-medium">Begin Your Spiritual Journey Today</span>
+            </div>
+            
+            <div className="space-y-6">
+              <h2 className="text-4xl md:text-6xl font-bold text-white">
+                Ready to Discover Your
+                <span className="block mt-2">Spiritual Gifts?</span>
+              </h2>
+              <p className="text-xl text-white/90 max-w-2xl mx-auto">
+                Join thousands of believers who have found clarity and purpose through our Spirit-led assessment.
+              </p>
+            </div>
+
+            <div className="pt-4">
+              <Link href="/quiz">
+                <Button 
+                  size="lg" 
+                  variant="secondary" 
+                  className="gap-2 text-lg px-12 py-6 group relative overflow-hidden bg-white hover:bg-white/90 text-violet-950 font-semibold shadow-2xl hover:shadow-white/25 transition-all duration-500"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-200 via-white to-indigo-200 opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+                  <span className="relative">Start Your Journey</span>
+                  <ArrowRight className="w-5 h-5 relative" />
+                </Button>
+              </Link>
+            </div>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold">Ready to Discover Your Spiritual Gifts?</h2>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Join thousands of believers who have found clarity and purpose through our Spirit-led assessment.
-          </p>
-          <Link href="/quiz">
-            <Button 
-              size="lg" 
-              variant="secondary" 
-              className="gap-2 text-lg px-8 group relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-              <span className="relative">Start Your Journey</span>
-              <ArrowRight className="w-5 h-5 relative" />
-            </Button>
-          </Link>
         </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
       </section>
-    </main>
+      </main>
   );
 }

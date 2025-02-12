@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Mail, Link2, Image, Loader2, Share2 } from 'lucide-react';
+import { Mail, Link2, Image, Loader2, Square, RectangleVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import html2canvas from 'html2canvas';
 import { EmailInviteDialog } from './email-invite-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ShareBarProps {
   userId: string;
@@ -32,8 +35,6 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
   const imageRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const shareUrl = `https://myspiritualpowers.com/results/${userId}`;
-  const shareTitle = `I discovered my Spiritual Power Archetype: ${spiritualArchetype}`;
-  const shareText = `Take this insightful spiritual gifts assessment to discover your unique spiritual powers and divine purpose.`;
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
   const handleShare = async (platform: string) => {
@@ -69,16 +70,15 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
     if (!imageRef.current) return;
 
     setIsGenerating(true);
-    trackEvent(AnalyticsEvents.RESULTS_SHARED, { platform: 'image', dimension: selectedDimension });
+    trackEvent(AnalyticsEvents.RESULTS_SHARED, { platform: 'image' });
 
     try {
       // Pre-load profile image if it exists
       let profileImageLoaded = false;
       if (photoURL) {
         try {
-          // Try loading through imgproxy with better options
           const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(photoURL)}&n=-1&w=200&h=200`;
-          await new Promise<void>((resolve, reject) => {
+          await new Promise<void>((resolve) => {
             const img = document.createElement('img');
             img.crossOrigin = 'anonymous';
             img.onload = () => {
@@ -87,7 +87,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
             };
             img.onerror = () => {
               console.warn('Failed to load profile image through proxy');
-              resolve(); // Resolve anyway to continue without profile pic
+              resolve();
             };
             img.src = proxyUrl;
           });
@@ -153,9 +153,6 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
       <EmailInviteDialog
         open={emailDialogOpen}
         onOpenChange={setEmailDialogOpen}
-        spiritualArchetype={spiritualArchetype}
-        displayName={displayName || 'Someone'}
-        userId={userId}
       />
 
       {/* Hidden template for image generation */}
@@ -216,16 +213,18 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                   borderRadius: '50%',
                   overflow: 'hidden',
                   border: '3px solid #a78bfa',
+                  display: 'flex',
+                  alignItems: 'center',
                 }}>
                   <img 
                     src={`https://images.weserv.nl/?url=${encodeURIComponent(photoURL)}&n=-1&w=200&h=200`}
                     alt={`${displayName}'s profile picture`}
-                    crossOrigin="anonymous"
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
                     }}
+                    crossOrigin="anonymous"
                   />
                 </div>
               )}
@@ -235,6 +234,9 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                   fontWeight: 'bold',
                   color: '#e5e7eb',
                   letterSpacing: '0.05em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: selectedDimension === 'square' ? '64px' : '80px',
                 }}>
                   {displayName}
                 </div>
@@ -258,7 +260,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
               color: 'white',
               padding: selectedDimension === 'square' ? '24px' : '32px',
               width: '100%',
-              marginBottom: selectedDimension === 'square' ? '32px' : '64px',
+              marginBottom: selectedDimension === 'square' ? '48px' : '80px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -441,24 +443,43 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                 <Mail className="h-4 w-4" />
                 Email
               </Button>
-              <Button 
-                variant="outline"
-                className="flex-1 sm:flex-none gap-2"
-                onClick={() => handleGenerateImage()}
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Image className="h-4 w-4" />
-                    Generate Image
-                  </>
-                )}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline"
+                    className="flex-1 sm:flex-none gap-2"
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Image className="h-4 w-4" />
+                        Generate Results Image
+                      </>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => {
+                    setSelectedDimension('square');
+                    handleGenerateImage();
+                  }}>
+                    <Square className="h-4 w-4 mr-2" />
+                    Square Image
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    setSelectedDimension('tall');
+                    handleGenerateImage();
+                  }}>
+                    <RectangleVertical className="h-4 w-4 mr-2" />
+                    Tall Image
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

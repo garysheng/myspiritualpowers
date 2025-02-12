@@ -4,10 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sparkles } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
+import { auth } from '@/lib/firebase';
 
 export function Header() {
   const pathname = usePathname();
   const isQuizPage = pathname === '/quiz';
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    await auth.signOut();
+  };
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-sm border-b bg-background/80 supports-[backdrop-filter]:bg-background/60">
@@ -39,15 +46,25 @@ export function Header() {
             Home
           </Link>
           {!isQuizPage && (
-            <Link href="/quiz">
+            user ? (
               <Button 
-                className="relative group"
+                variant="ghost"
+                onClick={handleSignOut}
                 size="sm"
               >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
-                <span className="relative">Take the Quiz</span>
+                Sign Out
               </Button>
-            </Link>
+            ) : (
+              <Link href="/quiz">
+                <Button 
+                  className="relative group"
+                  size="sm"
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
+                  <span className="relative">Take the Quiz</span>
+                </Button>
+              </Link>
+            )
           )}
         </nav>
       </div>

@@ -57,7 +57,7 @@ export const InviteEmail = ({
                     A personal message from {inviterName}:
                   </Text>
                   <Text style={customMessageText}>
-                    "{customMessage}"
+                    &ldquo;{customMessage}&rdquo;
                   </Text>
                 </Section>
                 <Hr style={divider} />

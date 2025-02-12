@@ -42,6 +42,9 @@ export interface QuizResultBackend {
     recommendedMinistries: string[];
     growthAreas: string[];
   };
+  rating?: number;
+  ratedAt?: Timestamp;
+  referredBy?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -84,4 +87,15 @@ export interface QuizProgress {
   isComplete: boolean;
   startTime: Date;
   lastUpdateTime: Date;
+}
+
+// Referral tracking
+export interface UserProfile {
+  userId: string;
+  displayName?: string;
+  photoURL?: string;
+  referredBy?: string; // userId of the person who invited them
+  referralCount: number; // number of people they've invited who completed the quiz
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 } 
