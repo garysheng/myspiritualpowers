@@ -62,7 +62,7 @@ export async function POST(request: Request) {
           width: 100%;
           margin-bottom: 40px;
         ">
-          ${spiritualGifts.slice(0, 4).map((gift, index) => `
+          ${spiritualGifts.slice(0, 4).map((gift) => `
             <div style="
               background: rgba(255, 255, 255, 0.1);
               padding: 20px;

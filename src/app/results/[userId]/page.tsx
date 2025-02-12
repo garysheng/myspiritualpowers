@@ -10,6 +10,7 @@ import { calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-q
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
+import Image from 'next/image';
 
 export default function ResultsPage() {
   const { userId } = useParams();
@@ -109,15 +110,15 @@ export default function ResultsPage() {
         {results && (
           <div className="flex items-center justify-center gap-4 mb-8">
             {results.photoURL && (
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
-                <img 
-                  src={results.photoURL} 
-                  alt="Profile" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <Image 
+                src={results.photoURL}
+                alt={`${results.displayName}'s profile picture`}
+                width={128}
+                height={128}
+                className="rounded-full"
+              />
             )}
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
               Spiritual Powers Quiz Results for {results.displayName}
             </h1>
           </div>

@@ -74,12 +74,6 @@ export interface PersonalizedInsights {
   growthAreas: string[];
 }
 
-// Firebase types placeholder - will be properly imported from firebase
-type FirebaseTimestamp = {
-  seconds: number;
-  nanoseconds: number;
-}
-
 // Quiz Categories
 export type QuizCategory = 'tendencies' | 'experiences' | 'desires' | 'skills';
 

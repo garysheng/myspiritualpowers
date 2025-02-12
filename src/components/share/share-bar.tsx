@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Mail, Link2, Image, Loader2 } from 'lucide-react';
+import { Mail, Link2, Image, Loader2, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import html2canvas from 'html2canvas';
+import { EmailInviteDialog } from './email-invite-dialog';
 
 interface ShareBarProps {
   userId: string;
@@ -33,6 +34,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
   const shareUrl = `https://myspiritualpowers.com/results/${userId}`;
   const shareTitle = `I discovered my Spiritual Power Archetype: ${spiritualArchetype}`;
   const shareText = `Take this insightful spiritual gifts assessment to discover your unique spiritual powers and divine purpose.`;
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
   const handleShare = async (platform: string) => {
     trackEvent(AnalyticsEvents.RESULTS_SHARED, { platform });
@@ -58,9 +60,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
         break;
 
       case 'email':
-        const emailSubject = encodeURIComponent(shareTitle);
-        const emailBody = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
-        window.open(`mailto:?subject=${emailSubject}&body=${emailBody}`);
+        setEmailDialogOpen(true);
         break;
     }
   };
@@ -150,6 +150,14 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
 
   return (
     <>
+      <EmailInviteDialog
+        open={emailDialogOpen}
+        onOpenChange={setEmailDialogOpen}
+        spiritualArchetype={spiritualArchetype}
+        displayName={displayName || 'Someone'}
+        userId={userId}
+      />
+
       {/* Hidden template for image generation */}
       <div className="fixed -left-[9999px]" ref={imageRef}>
         <div 
@@ -211,7 +219,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                 }}>
                   <img 
                     src={`https://images.weserv.nl/?url=${encodeURIComponent(photoURL)}&n=-1&w=200&h=200`}
-                    alt="Profile" 
+                    alt={`${displayName}'s profile picture`}
                     crossOrigin="anonymous"
                     style={{
                       width: '100%',
@@ -433,77 +441,24 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                 <Mail className="h-4 w-4" />
                 Email
               </Button>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="outline"
-                    className="flex-1 sm:flex-none gap-2"
-                  >
+              <Button 
+                variant="outline"
+                className="flex-1 sm:flex-none gap-2"
+                onClick={() => handleGenerateImage()}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
                     <Image className="h-4 w-4" />
-                    Generate Graphic
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Generate Shareable Graphic</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-6 py-4">
-                    <div className="space-y-2">
-                      <Label>Choose Dimensions</Label>
-                      <RadioGroup 
-                        defaultValue="square" 
-                        className="grid grid-cols-2 gap-4"
-                        onValueChange={(value) => setSelectedDimension(value as ImageDimensions)}
-                      >
-                        <div>
-                          <RadioGroupItem 
-                            value="square" 
-                            id="square" 
-                            className="peer sr-only" 
-                          />
-                          <Label
-                            htmlFor="square"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <div className="w-16 h-16 mb-2 border-2 border-current rounded" />
-                            Square
-                            <span className="text-xs text-muted-foreground">1080 × 1080</span>
-                          </Label>
-                        </div>
-                        <div>
-                          <RadioGroupItem 
-                            value="tall" 
-                            id="tall" 
-                            className="peer sr-only" 
-                          />
-                          <Label
-                            htmlFor="tall"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <div className="w-12 h-16 mb-2 border-2 border-current rounded" />
-                            Story
-                            <span className="text-xs text-muted-foreground">1080 × 1920</span>
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    <Button 
-                      className="w-full" 
-                      onClick={handleGenerateImage}
-                      disabled={isGenerating}
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        'Generate Image'
-                      )}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                    Generate Image
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>

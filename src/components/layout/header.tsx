@@ -12,7 +12,7 @@ export function Header() {
     <header className="border-b">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="font-bold text-xl">
-          My Spiritual Powers
+          MySpiritualPowers.com
         </Link>
 
         <nav className="flex items-center gap-6">
