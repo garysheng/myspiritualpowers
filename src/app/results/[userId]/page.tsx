@@ -133,8 +133,8 @@ export default function ResultsPage() {
               <NextImage
                 src={results.photoURL}
                 alt={`${results.displayName}'s profile picture`}
-                width={96}
-                height={96}
+                width={64}
+                height={64}
                 className="rounded-full"
               />
             )}
@@ -142,11 +142,6 @@ export default function ResultsPage() {
               Spiritual Powers Quiz Results for {results.displayName}
             </h1>
           </div>
-        )}
-
-        {/* Video Section */}
-        {userId && (
-          <VideoPlayer userId={userId as string} />
         )}
 
         {/* Spiritual Archetype Card */}
@@ -196,6 +191,11 @@ export default function ResultsPage() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Video Section */}
+        {userId && (
+          <VideoPlayer userId={userId as string} />
         )}
 
         {/* Spiritual Gifts Card */}

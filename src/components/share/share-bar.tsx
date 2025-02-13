@@ -182,7 +182,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
 
       {/* Hidden template for image generation */}
       <div className="fixed -left-[9999px]" ref={imageRef}>
-        <div 
+        <div
           style={{
             width: '1080px',
             height: '1080px',
@@ -211,19 +211,20 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
             pointerEvents: 'none',
           }} />
 
-          <div style={{ 
-            width: '100%', 
+          <div style={{
+            width: '100%',
             zIndex: 1,
           }}>
             {/* User Profile Section */}
-            <div 
+            <div
               data-profile-section
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '16px',
+                marginBottom: '20px',
                 gap: '20px',
+                marginTop: '-20px',
               }}
             >
               {photoURL && (
@@ -236,11 +237,9 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                   display: 'flex',
                   alignItems: 'center',
                 }}>
-                  <Image 
+                  <img
                     src={`https://images.weserv.nl/?url=${encodeURIComponent(photoURL)}&n=-1&w=200&h=200`}
                     alt={`${displayName || 'User'}'s profile picture`}
-                    width={200}
-                    height={200}
                     style={{
                       width: '100%',
                       height: '100%',
@@ -251,13 +250,11 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
               )}
               {displayName && (
                 <div style={{
-                  fontSize: '28px',
+                  fontSize: '36px',
                   fontWeight: 'bold',
                   color: '#e5e7eb',
                   letterSpacing: '0.05em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  height: '64px',
+                  paddingBottom: '25px',
                 }}>
                   {displayName}
                 </div>
@@ -271,10 +268,11 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
               opacity: 0.9,
               maxWidth: '90%',
               margin: '0 auto',
+              textAlign: 'center',
             }}>
               My Spiritual Power Archetype
             </div>
-            
+
             <div style={{
               fontSize: '56px',
               fontWeight: 'bold',
@@ -408,14 +406,16 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
           </div>
 
           <div style={{
-            marginTop: '60px',
-            marginBottom: '0',
+            marginTop: 'auto',
+            marginBottom: '20px',
             zIndex: 1,
+            paddingTop: '20px',
           }}>
             <div style={{
               fontSize: '20px',
               color: '#9ca3af',
               opacity: 0.8,
+              marginBottom: '8px',
             }}>
               Discover your spiritual gifts at
             </div>
@@ -423,7 +423,6 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
               fontSize: '24px',
               color: '#a78bfa',
               fontWeight: 'bold',
-              marginTop: '8px',
             }}>
               myspiritualpowers.com
             </div>
@@ -441,25 +440,25 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                 Help others discover their spiritual gifts by sharing your results
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 sm:flex sm:justify-center gap-2">
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto gap-2" 
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto gap-2"
                 onClick={() => handleShare('copy')}
               >
                 <Link2 className="h-4 w-4" />
                 Copy Link
               </Button>
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto gap-2" 
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto gap-2"
                 onClick={() => handleShare('email')}
               >
                 <Mail className="h-4 w-4" />
                 Email
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="w-full sm:w-auto gap-2"
                 onClick={handleGenerateImage}
@@ -477,7 +476,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                   </>
                 )}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="w-full sm:w-auto gap-2"
                 onClick={async () => {
@@ -510,7 +509,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                     if (navigator.canShare && navigator.canShare(shareData)) {
                       await trackEvent(AnalyticsEvents.RESULTS_SHARED, { platform: 'native_share' });
                       await navigator.share(shareData);
-                      
+
                       toast({
                         title: "Success!",
                         description: "Your spiritual powers have been shared.",
