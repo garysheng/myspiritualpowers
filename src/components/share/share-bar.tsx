@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Mail, Link2, Image as ImageIcon, Loader2, Share } from 'lucide-react';
+import { Mail, Link2, Image as ImageIcon, Loader2, Share, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import html2canvas from 'html2canvas';
 import { EmailInviteDialog } from './email-invite-dialog';
 import { getCachedImage, setCachedImage } from '@/lib/image-cache';
+import { useAuth } from '@/contexts/auth-context';
+import Link from 'next/link';
 
 interface ShareBarProps {
   userId: string;
@@ -23,6 +25,7 @@ interface ShareBarProps {
 }
 
 export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayName, photoURL, biblicalExample, modernApplication }: ShareBarProps) {
+  const { user } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -171,6 +174,39 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
       setIsGenerating(false);
     }
   };
+
+  // If not logged in, show CTA
+  if (!user) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent backdrop-blur-sm z-50 pb-4 border-t border-white/10">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="flex flex-col gap-4">
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-semibold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
+                Discover Your Spiritual Powers
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Take the quiz to uncover your unique spiritual gifts and divine purpose
+              </p>
+            </div>
+
+            <Link href="/quiz" className="block">
+              <Button 
+                size="lg"
+                className="w-full relative group"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
+                <span className="relative flex items-center justify-center gap-2">
+                  Take the Quiz
+                  <ArrowRight className="w-5 h-5" />
+                </span>
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
