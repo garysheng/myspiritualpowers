@@ -82,11 +82,19 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedText = e.clipboardData.getData('text');
-    const pastedEmails = pastedText.split(/[,\\n]/).map(email => email.trim());
     
-    pastedEmails.forEach(email => {
-      if (email) addEmail(email);
-    });
+    // Split by common delimiters while preserving full email addresses
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+    const matches = pastedText.match(emailRegex);
+    
+    if (matches) {
+      matches.forEach(email => {
+        if (email) addEmail(email);
+      });
+    } else {
+      // If no email pattern found, just add the text as is
+      addEmail(pastedText);
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,127 +224,142 @@ export function EmailInviteDialog({ open, onOpenChange }: EmailInviteDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle>Invite Others to Discover Their Spiritual Powers</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-xl overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
+        <DialogHeader className="space-y-4 pb-6 relative">
+          <DialogTitle className="text-2xl bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">Invite Others to Discover Their Spiritual Powers</DialogTitle>
+          <DialogDescription className="text-base">
             Share your spiritual journey and invite others to discover their unique gifts.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Email Input */}
+        <div className="space-y-8 relative">
+          {/* Email Input Section */}
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[2.5rem] max-h-[12rem] overflow-y-auto">
-              {emails.map((email, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
-                    email.valid 
-                      ? 'bg-primary/10 text-primary border border-primary/20' 
-                      : 'bg-destructive/10 text-destructive border border-destructive/20'
-                  }`}
-                >
-                  <span>{email.email}</span>
-                  <button
-                    onClick={() => setEmails(prev => prev.filter((_, i) => i !== index))}
-                    className="hover:text-foreground/80"
+            <div className="space-y-2.5">
+              <label className="text-sm font-medium">Add Email Addresses</label>
+              <div className="flex flex-wrap gap-2 p-3 border rounded-lg min-h-[2.5rem] max-h-[12rem] overflow-y-auto bg-gradient-to-br from-violet-500/5 via-primary/5 to-indigo-500/5 backdrop-blur-sm">
+                {emails.map((email, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-sm transition-colors ${
+                      email.valid 
+                        ? 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20' 
+                        : 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20'
+                    }`}
                   >
-                    <X className="h-3 w-3" />
-                  </button>
+                    <span>{email.email}</span>
+                    <button
+                      onClick={() => setEmails(prev => prev.filter((_, i) => i !== index))}
+                      className="hover:text-foreground/80 rounded-full p-0.5 hover:bg-background/50"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <input
+                  type="text"
+                  value={currentInput}
+                  onChange={e => setCurrentInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onPaste={handlePaste}
+                  placeholder={emails.length === 0 ? "Enter email addresses..." : ""}
+                  className="flex-1 min-w-[200px] bg-transparent border-0 outline-none placeholder:text-muted-foreground focus:ring-0"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 px-1">
+              <span className="text-xs text-muted-foreground">Press Enter or use commas to add multiple emails</span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs font-medium">
+                  <span className="text-primary">{emails.length}</span>
+                  <span className="text-muted-foreground">/{MAX_EMAILS}</span>
+                </span>
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="gap-2 h-8"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    Import CSV
+                  </Button>
                 </div>
-              ))}
-              <input
-                type="text"
-                value={currentInput}
-                onChange={e => setCurrentInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-                placeholder={emails.length === 0 ? "Enter email addresses..." : ""}
-                className="flex-1 min-w-[200px] bg-transparent border-0 outline-none placeholder:text-muted-foreground"
-              />
+              </div>
             </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Press Enter or use commas to add multiple emails</span>
-              <span>{emails.length}/{MAX_EMAILS}</span>
-            </div>
-          </div>
 
-          {/* Divider with text */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-muted"></div>
+            {/* Divider with text */}
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-muted"></div>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or share via link</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or share via link</span>
-            </div>
-          </div>
 
-          {/* Custom Referral Link Button */}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleCopyReferralLink}
-            disabled={!user}
-          >
-            {isLinkCopied ? (
-              <>
-                <Check className="mr-2 h-4 w-4 text-green-500" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <LinkIcon className="mr-2 h-4 w-4" />
-                Copy Custom Invite Link
-              </>
-            )}
-          </Button>
-
-          {/* CSV Upload */}
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
+            {/* Custom Referral Link Button */}
             <Button
               variant="outline"
-              className="w-full"
-              onClick={() => fileInputRef.current?.click()}
+              className="w-full gap-2 h-10"
+              onClick={handleCopyReferralLink}
+              disabled={!user}
             >
-              <Upload className="mr-2 h-4 w-4" />
-              Upload CSV
+              {isLinkCopied ? (
+                <>
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span>Copied to Clipboard!</span>
+                </>
+              ) : (
+                <>
+                  <LinkIcon className="h-4 w-4" />
+                  <span>Copy Custom Invite Link</span>
+                </>
+              )}
+            </Button>
+
+            {/* Personal Message */}
+            <div className="space-y-3 pt-2">
+              <div className="space-y-1">
+                <h3 className="text-sm font-medium">Add a Personal Message</h3>
+                <p className="text-xs text-muted-foreground">Optional message to include in the invitation email</p>
+              </div>
+              <Textarea
+                value={customMessage}
+                onChange={(e) => setCustomMessage(e.target.value)}
+                placeholder="Write a personal message..."
+                className="min-h-[100px] resize-none bg-secondary/20"
+              />
+            </div>
+
+            {/* Send Button */}
+            <Button 
+              className="w-full h-11 text-base mt-4 relative group" 
+              onClick={handleSendInvites}
+              disabled={isSending || emails.length === 0}
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
+              <span className="relative flex items-center justify-center">
+                {isSending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending Invitations...
+                  </>
+                ) : (
+                  'Send Invitations'
+                )}
+              </span>
             </Button>
           </div>
-
-          {/* Personal Message */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium">Add a Personal Message (Optional)</h3>
-            <Textarea
-              value={customMessage}
-              onChange={(e) => setCustomMessage(e.target.value)}
-              placeholder="Write a personal message to include in the invitation..."
-              className="min-h-[100px]"
-            />
-          </div>
-
-          {/* Send Button */}
-          <Button 
-            className="w-full" 
-            onClick={handleSendInvites}
-            disabled={isSending || emails.length === 0}
-          >
-            {isSending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              'Send Invitations'
-            )}
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

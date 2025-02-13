@@ -21,7 +21,7 @@ const ELEVENLABS_CONSTANTS = {
 } as const;
 
 const HEDRA_BASE_URL = 'https://mercury.dev.dream-ai.com/api';
-const REFERENCE_IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/myspiritualpowers-6cc8d.firebasestorage.app/o/reference_faces%2F1.png?alt=media&token=08c96d2d-bbb9-4d9b-8a97-62861d525400';
+const REFERENCE_IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/myspiritualpowers-6cc8d.firebasestorage.app/o/reference_faces%2F1.png?alt=media&token=6155ff44-91d5-4eba-890c-103bcb750d17';
 
 interface VideoGenerationData {
   userId: string;
