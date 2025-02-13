@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: 'images.weserv.nl',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        pathname: '/v0/b/**',
+      },
     ],
   },
 };

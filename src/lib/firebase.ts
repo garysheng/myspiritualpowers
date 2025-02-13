@@ -1,8 +1,9 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getFunctions } from 'firebase/functions';
-import { getAnalytics, Analytics } from 'firebase/analytics';
+import { getAnalytics, isSupported } from 'firebase/analytics';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,15 +16,15 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const functions = getFunctions(app);
+const storage = getStorage(app);
 
-// Initialize Analytics only on client side
-let analytics: Analytics | null = null;
-if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
-}
+// Initialize analytics only in production and if supported
+export const analytics = typeof window !== 'undefined' 
+  ? isSupported().then(yes => yes ? getAnalytics(app) : null) 
+  : null;
 
-export { app, db, auth, functions, analytics }; 
+export { app, db, auth, functions, storage }; 

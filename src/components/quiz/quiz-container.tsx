@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, LogIn } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LogIn, Sparkles, Star, Zap, Book, Mail } from 'lucide-react';
 import { QUESTIONS, calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-questions';
 import { QuizProgress } from '@/types';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
@@ -52,6 +52,7 @@ export function QuizContainer() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const [progress, setProgress] = useState<QuizProgress>(() => {
     // Try to load saved progress from localStorage
     if (typeof window !== 'undefined') {
@@ -129,7 +130,9 @@ export function QuizContainer() {
     setIsAnimating(false);
     setSelectedOptionId(null);
 
-    if (!isLastQuestion) {
+    if (isLastQuestion) {
+      setShowSignup(true);
+    } else {
       handleNext();
     }
   }, [isAnimating, currentQuestion, isLastQuestion, progress.responses, handleNext]);
@@ -200,8 +203,8 @@ export function QuizContainer() {
           strength: Math.round((score / 15) * 100),
         }));
 
-      // Get LLM analysis
-      const llmAnalysis = await analyzeSpiritualGifts(responsesArray, sortedGifts);
+      // Get AI analysis of spiritual gifts
+      const llmAnalysis = await analyzeSpiritualGifts(responsesArray, sortedGifts, user.displayName || 'Seeker');
 
       // Check for referral from URL params
       const urlParams = new URLSearchParams(window.location.search);
@@ -243,6 +246,7 @@ export function QuizContainer() {
         rawLlmResponse: llmAnalysis.rawResponse,
         spiritualArchetype: llmAnalysis.archetype,
         personalizedInsights: llmAnalysis.insights,
+        videoScript: llmAnalysis.videoScript,
         referredBy: referrerId,
         // Only store display name and photo URL if they differ from Firebase Auth
         ...(user.displayName !== null && { displayName: user.displayName }),
@@ -299,6 +303,61 @@ export function QuizContainer() {
     }
   };
 
+  // New signup screen component
+  const SignupScreen = () => (
+    <Card className="w-full max-w-2xl p-6 space-y-8 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
+      <div className="relative space-y-6 text-center">
+        <div className="space-y-2">
+          <div className="flex justify-center">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-primary/20 to-indigo-500/20 rounded-full blur-2xl opacity-50 animate-pulse" />
+              <Sparkles className="w-12 h-12 text-primary" />
+            </div>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold">Your Results Are Almost Ready!</h2>
+          <p className="text-sm text-muted-foreground">
+            You&apos;re almost there! Sign in to save your results and get personalized insights.
+          </p>
+        </div>
+
+        <div className="bg-black/60 p-4 rounded-lg backdrop-blur-sm space-y-3">
+          <p className="font-medium">You&apos;ll receive:</p>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-primary" />
+              <span>Your Spiritual Power Archetype</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-primary" />
+              <span>Top 5 Spiritual Gifts Analysis</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Book className="w-4 h-4 text-primary" />
+              <span>Biblical References & Applications</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-primary" />
+              <span>Detailed Results Email</span>
+            </li>
+          </ul>
+        </div>
+
+        <Button
+          size="lg"
+          onClick={handleComplete}
+          className="w-full relative group"
+        >
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500 via-primary to-indigo-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 animate-tilt"></div>
+          <span className="relative flex items-center gap-2">
+            <LogIn className="w-5 h-5" />
+            Sign in with Google to Get Results
+          </span>
+        </Button>
+      </div>
+    </Card>
+  );
+
   if (!hasStarted) {
     return (
       <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center relative">
@@ -318,6 +377,17 @@ export function QuizContainer() {
             </Button>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (showSignup) {
+    return (
+      <div className="min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center p-4">
+        {isAnalyzing && (
+          <LoaderOverlay message="Analyzing your spiritual gifts... This may take a moment." />
+        )}
+        <SignupScreen />
       </div>
     );
   }

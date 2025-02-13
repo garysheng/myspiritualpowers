@@ -16,16 +16,21 @@ interface LLMAnalysisResult {
     recommendedMinistries: string[];
     growthAreas: string[];
   };
+  videoScript: {
+    title: string;
+    script: string;
+  };
   rawResponse: string;
 }
 
 export async function analyzeSpiritualGifts(
   responses: QuizResponse[],
-  topGifts: SpiritualGift[]
+  topGifts: SpiritualGift[],
+  displayName: string
 ): Promise<LLMAnalysisResult> {
   const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-  const prompt = `As a spiritual gifts analyst, analyze these quiz responses and the identified spiritual gifts to create a personalized spiritual profile. Format the response as a JSON object with the following structure:
+  const prompt = `As a spiritual gifts analyst, analyze these quiz responses and the identified spiritual gifts to create a personalized spiritual profile for ${displayName}. Format the response as a JSON object with the following structure:
   {
     "archetype": {
       "name": "A creative name for their spiritual power archetype based on their gift combination",
@@ -34,10 +39,14 @@ export async function analyzeSpiritualGifts(
       "modernApplication": "How this archetype can be effectively used in today's world"
     },
     "insights": {
-      "summary": "A personalized paragraph analyzing their unique combination of gifts",
+      "summary": "A personalized paragraph analyzing their unique combination of gifts, addressing ${displayName} by name",
       "strengthsAndWeaknesses": "Analysis of how their gifts complement each other and potential blind spots",
       "recommendedMinistries": ["List of 3-5 specific ministry areas where they could thrive"],
       "growthAreas": ["List of 3-4 specific areas for development"]
+    },
+    "videoScript": {
+      "title": "A catchy title for the celebration video",
+      "script": "Write an engaging 30-45 second video script that celebrates ${displayName}'s spiritual archetype discovery. The script should: 1) Start with an exciting hook about their archetype, 2) Reference the biblical figure who shared similar gifts, 3) Highlight their unique combination of spiritual powers, 4) End with an inspiring call to action about using their gifts. Use a mix of celebration and inspiration in the tone."
     }
   }
 

@@ -1,9 +1,14 @@
 import { analytics } from './firebase';
 import { logEvent } from 'firebase/analytics';
 
-export const trackEvent = (eventName: string, eventParams?: Record<string, string | number | boolean>) => {
-  if (analytics !== null) {
-    logEvent(analytics, eventName, eventParams);
+export const trackEvent = async (eventName: string, eventParams?: Record<string, string | number | boolean>) => {
+  try {
+    const analyticsInstance = await analytics;
+    if (analyticsInstance) {
+      logEvent(analyticsInstance, eventName, eventParams);
+    }
+  } catch (error) {
+    console.error('Error tracking event:', error);
   }
 };
 

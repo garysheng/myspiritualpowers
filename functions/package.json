@@ -1,0 +1,38 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/src/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
+    "@types/node": "^18.0.0",
+    "@types/node-fetch": "^2.6.12",
+    "elevenlabs": "^1.51.0",
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.5.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^9.20.1",
+    "typescript": "^5.3.3"
+  },
+  "private": true
+}

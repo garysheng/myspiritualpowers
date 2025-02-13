@@ -42,6 +42,10 @@ export interface QuizResultBackend {
     recommendedMinistries: string[];
     growthAreas: string[];
   };
+  videoScript: {
+    title: string;
+    script: string;
+  };
   rating?: number;
   ratedAt?: Timestamp;
   referredBy?: string;
