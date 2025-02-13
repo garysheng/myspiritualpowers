@@ -66,11 +66,13 @@ async function generateAudioWithElevenLabs(script: string): Promise<Buffer> {
 }
 
 async function generateVideoWithHedra(audioUrl: string): Promise<string> {
+  console.log('Starting video generation with Hedra');
+  
   // Create video generation request
   const response = await fetch(`${HEDRA_BASE_URL}/videos`, {
     method: 'POST',
     headers: {
-      'X-API-KEY': hedraApiKey.value(),
+      'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -80,50 +82,77 @@ async function generateVideoWithHedra(audioUrl: string): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to create video: ${response.statusText}`);
+    const errorText = await response.text();
+    console.error('Hedra video creation failed:', {
+      status: response.status,
+      statusText: response.statusText,
+      errorText,
+    });
+    throw new Error(`Failed to create video: ${response.statusText}. ${errorText}`);
   }
 
   const data = await response.json();
+  console.log('Hedra video creation response:', data);
   const videoId = data.id;
 
   // Poll for completion (max 9 minutes to leave buffer for other operations)
   for (let i = 0; i < 54; i++) { // 54 iterations * 10 seconds = 540 seconds (9 minutes)
+    console.log(`Checking video status (attempt ${i + 1}/54)`);
+    
     const statusResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}`, {
       method: 'GET',
       headers: {
-        'X-API-KEY': hedraApiKey.value(),
+        'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
         'Content-Type': 'application/json',
       },
     });
 
     if (!statusResponse.ok) {
-      throw new Error(`Failed to check video status: ${statusResponse.statusText}`);
+      const errorText = await statusResponse.text();
+      console.error('Hedra status check failed:', {
+        status: statusResponse.status,
+        statusText: statusResponse.statusText,
+        errorText,
+      });
+      throw new Error(`Failed to check video status: ${statusResponse.statusText}. ${errorText}`);
     }
 
     const statusData = await statusResponse.json();
+    console.log('Video status:', statusData);
 
     if (statusData.status === 'completed') {
+      console.log('Video generation completed, fetching download URL');
+      
       // Get video URL
       const videoResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}/download`, {
         method: 'GET',
         headers: {
-          'X-API-KEY': hedraApiKey.value(),
+          'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
         },
       });
 
       if (!videoResponse.ok) {
-        throw new Error(`Failed to get video URL: ${videoResponse.statusText}`);
+        const errorText = await videoResponse.text();
+        console.error('Hedra video download failed:', {
+          status: videoResponse.status,
+          statusText: videoResponse.statusText,
+          errorText,
+        });
+        throw new Error(`Failed to get video URL: ${videoResponse.statusText}. ${errorText}`);
       }
 
       const videoData = await videoResponse.json();
+      console.log('Got video download URL');
       return videoData.url;
     }
 
     if (statusData.status === 'failed') {
-      throw new Error('Video generation failed');
+      console.error('Hedra video generation failed:', statusData);
+      throw new Error(`Video generation failed: ${statusData.error || 'Unknown error'}`);
     }
 
     // Wait 10 seconds before next poll
+    console.log('Waiting 10 seconds before next status check...');
     await new Promise(resolve => setTimeout(resolve, 10000));
   }
 
