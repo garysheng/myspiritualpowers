@@ -16,15 +16,10 @@ import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass, Users, Imag
 import NextImage from 'next/image';
 import { SharePreview } from '@/components/share/share-preview';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { getCachedImage } from '@/lib/image-cache';
+import { useToast } from '@/hooks/use-toast';;
 import { VideoPlayer } from '@/components/video/video-player';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
-
-interface ShareBarElement extends HTMLElement {
-  handleGenerateImage?: () => void;
-}
 
 export default function ResultsPage() {
   const { userId } = useParams();

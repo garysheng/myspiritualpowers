@@ -1,4 +1,5 @@
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onRequest } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import { ElevenLabsClient } from 'elevenlabs';
 import fetch from 'node-fetch';
@@ -244,6 +245,129 @@ export const generateVideo2 = onDocumentCreated(
       });
       
       return { success: false, error: errorMessage };
+    }
+  }
+);
+
+// New HTTP function for manual video generation
+export const generateVideoManual = onRequest(
+  {
+    region: 'us-central1',
+    memory: '2GiB',
+    timeoutSeconds: 540,
+    secrets: [elevenlabsApiKey, hedraApiKey],
+  },
+  async (req, res) => {
+    // Only allow POST requests
+    if (req.method !== 'POST') {
+      res.status(405).send('Method Not Allowed');
+      return;
+    }
+
+    const userId = req.body.userId;
+    if (!userId) {
+      res.status(400).send('Missing userId in request body');
+      return;
+    }
+
+    console.log('Manual video generation triggered for user:', userId);
+
+    try {
+      // Get the quiz result document
+      const quizDoc = await admin.firestore().collection('quiz_results').doc(userId).get();
+      
+      if (!quizDoc.exists) {
+        res.status(404).send('Quiz results not found');
+        return;
+      }
+
+      const quizData = quizDoc.data() as QuizResultData;
+      
+      // Create a document to track video generation progress
+      const videoRef = admin.firestore().collection('video_generations').doc(userId);
+      
+      // Initialize video generation tracking
+      const videoData: VideoGenerationData = {
+        userId,
+        script: quizData.videoScript.script,
+        status: 'pending',
+        createdAt: admin.firestore.Timestamp.now(),
+        updatedAt: admin.firestore.Timestamp.now(),
+      };
+      
+      await videoRef.set(videoData);
+
+      // Generate audio with ElevenLabs
+      const audioBuffer = await generateAudioWithElevenLabs(quizData.videoScript.script);
+
+      // Upload audio to Firebase Storage
+      const bucket = admin.storage().bucket();
+      const audioFileName = `video_generations/${userId}/audio.mp3`;
+      const audioFile = bucket.file(audioFileName);
+      
+      await audioFile.save(audioBuffer);
+      
+      // Get the public URL for the audio file
+      const [audioUrl] = await audioFile.getSignedUrl({
+        action: 'read',
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+      });
+
+      // Update video generation status
+      await videoRef.update({
+        status: 'audio_generated',
+        audioUrl,
+        updatedAt: admin.firestore.Timestamp.now(),
+      });
+
+      // Generate video with Hedra
+      try {
+        const hedraVideoUrl = await generateVideoWithHedra(audioUrl);
+        
+        // Download video from Hedra
+        const videoResponse = await fetch(hedraVideoUrl);
+        const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
+
+        // Upload to Firebase Storage
+        const videoFileName = `video_generations/${userId}/video.mp4`;
+        const videoFile = bucket.file(videoFileName);
+        
+        await videoFile.save(videoBuffer, {
+          metadata: {
+            contentType: 'video/mp4',
+          },
+        });
+
+        // Get the public URL for the video
+        const [videoUrl] = await videoFile.getSignedUrl({
+          action: 'read',
+          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+        });
+
+        // Update status to complete
+        await videoRef.update({
+          status: 'complete',
+          videoUrl,
+          updatedAt: admin.firestore.Timestamp.now(),
+        });
+
+        res.json({ success: true, videoUrl });
+      } catch (videoError) {
+        console.error('Error generating video:', videoError);
+        await videoRef.update({
+          status: 'error',
+          error: videoError instanceof Error ? videoError.message : 'Video generation failed',
+          updatedAt: admin.firestore.Timestamp.now(),
+        });
+        res.status(500).json({ 
+          success: false, 
+          error: videoError instanceof Error ? videoError.message : 'Video generation failed' 
+        });
+      }
+    } catch (error: unknown) {
+      console.error('Error in video generation process:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({ success: false, error: errorMessage });
     }
   }
 ); 
