@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getCachedImage } from '@/lib/image-cache';
 import { VideoPlayer } from '@/components/video/video-player';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface ShareBarElement extends HTMLElement {
   handleGenerateImage?: () => void;
@@ -136,8 +138,8 @@ export default function ResultsPage() {
               <NextImage
                 src={results.photoURL}
                 alt={`${results.displayName}'s profile picture`}
-                width={128}
-                height={128}
+                width={96}
+                height={96}
                 className="rounded-full"
               />
             )}
@@ -384,18 +386,35 @@ export default function ResultsPage() {
               <div className="flex gap-2 mt-4">
                 <Button
                   className="flex-1 gap-2"
-                  onClick={() => {
-                    if (results) {
+                  onClick={async () => {
+                    if (!results) return;
+                    try {
+                      const imageRef = ref(storage, `share_images/${userId}/square.png`);
+                      const url = await getDownloadURL(imageRef);
+                      
+                      // Open in new tab
+                      window.open(url, '_blank');
+                      
                       trackEvent(AnalyticsEvents.RESULTS_DOWNLOADED);
-                      const shareBar = document.querySelector('share-bar') as ShareBarElement;
-                      if (shareBar?.handleGenerateImage) {
-                        shareBar.handleGenerateImage();
-                      }
+                      
+                      toast({
+                        title: "Image opened!",
+                        description: "Right click and save to download.",
+                        duration: 3000,
+                      });
+                    } catch (error) {
+                      console.error('Error opening image:', error);
+                      toast({
+                        title: "Failed to open image",
+                        description: "Please try again later.",
+                        variant: "destructive",
+                        duration: 3000,
+                      });
                     }
                   }}
                 >
                   <Image className="w-4 h-4" />
-                  Download Image
+                  Open Image
                 </Button>
                 <Button
                   className="flex-1 gap-2"
@@ -404,17 +423,9 @@ export default function ResultsPage() {
                     if (!results) return;
 
                     try {
-                      const cached = await getCachedImage(userId as string, 'square');
-                      if (!cached?.url) {
-                        toast({
-                          title: "Image not ready",
-                          description: "Please try again in a moment.",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
-
-                      const response = await fetch(cached.url);
+                      const imageRef = ref(storage, `share_images/${userId}/square.png`);
+                      const url = await getDownloadURL(imageRef);
+                      const response = await fetch(url);
                       const blob = await response.blob();
                       const file = new File([blob], 'spiritual-powers.png', { type: 'image/png' });
 

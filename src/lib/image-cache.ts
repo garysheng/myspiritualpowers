@@ -27,7 +27,7 @@ export async function getCachedImage(userId: string, dimension: 'square' | 'tall
       const url = await getDownloadURL(imageRef);
       
       // Create a CORS-friendly URL using images.weserv.nl
-      const corsUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&n=-1`;
+      const corsUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png&n=-1`;
       
       return {
         url: corsUrl,

@@ -138,6 +138,9 @@ export const generateVideo2 = onDocumentCreated(
     secrets: [elevenlabsApiKey, hedraApiKey],
   },
   async (event) => {
+    console.log('Function triggered with event params:', event.params);
+    console.log('Document path:', `quiz_results/${event.params.userId}`);
+    
     const snapshot = event.data;
     if (!snapshot) {
       console.log('No data associated with the event');
@@ -145,7 +148,9 @@ export const generateVideo2 = onDocumentCreated(
     }
 
     const quizData = snapshot.data() as QuizResultData;
+    console.log('Quiz data:', quizData);
     const userId = event.params.userId;
+    console.log('User ID:', userId);
     
     // Create a document to track video generation progress
     const videoRef = admin.firestore().collection('video_generations').doc(userId);
