@@ -2,13 +2,13 @@ import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
 import { ElevenLabsClient } from 'elevenlabs';
 import fetch from 'node-fetch';
-import { defineString } from 'firebase-functions/params';
+import { defineSecret } from 'firebase-functions/params';
 
 admin.initializeApp();
 
 // Define environment variables
-const elevenlabsApiKey = defineString('ELEVENLABS_API_KEY');
-const hedraApiKey = defineString('HEDRA_API_KEY');
+const elevenlabsApiKey = defineSecret('ELEVENLABS_API_KEY');
+const hedraApiKey = defineSecret('HEDRA_API_KEY');
 
 // ElevenLabs API configuration
 const ELEVENLABS_CONSTANTS = {
