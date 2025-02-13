@@ -24,8 +24,8 @@
     "@types/node": "^18.0.0",
     "@types/node-fetch": "^2.6.12",
     "elevenlabs": "^1.51.0",
-    "firebase-admin": "^11.11.1",
-    "firebase-functions": "^4.5.0",
+    "firebase-admin": "^13.1.0",
+    "firebase-functions": "^6.3.1",
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {

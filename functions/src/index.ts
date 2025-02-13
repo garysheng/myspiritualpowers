@@ -1,21 +1,14 @@
-import * as functions from 'firebase-functions/v1';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
 import { ElevenLabsClient } from 'elevenlabs';
 import fetch from 'node-fetch';
+import { defineString } from 'firebase-functions/params';
 
 admin.initializeApp();
 
-// Get environment variables
-const elevenlabsApiKey = functions.config().elevenlabs?.api_key;
-const hedraApiKey = functions.config().hedra?.api_key;
-
-if (!elevenlabsApiKey) {
-  throw new Error('Missing ElevenLabs API key. Set it using firebase functions:config:set elevenlabs.api_key="YOUR_API_KEY"');
-}
-
-if (!hedraApiKey) {
-  throw new Error('Missing Hedra API key. Set it using firebase functions:config:set hedra.api_key="YOUR_API_KEY"');
-}
+// Define environment variables
+const elevenlabsApiKey = defineString('ELEVENLABS_API_KEY');
+const hedraApiKey = defineString('HEDRA_API_KEY');
 
 // ElevenLabs API configuration
 const ELEVENLABS_CONSTANTS = {
@@ -45,18 +38,19 @@ interface QuizResultData {
   };
 }
 
-async function generateAudioWithElevenLabs(text: string): Promise<Buffer> {
-  try {
-    // Initialize ElevenLabs with explicit API key
-    const elevenLabs = new ElevenLabsClient({
-      apiKey: elevenlabsApiKey
-    });
+async function generateAudioWithElevenLabs(script: string): Promise<Buffer> {
+  const client = new ElevenLabsClient({
+    apiKey: elevenlabsApiKey.value(),
+  });
 
-    const audioStream = await elevenLabs.generate({
-      text,
-      model_id: ELEVENLABS_CONSTANTS.TTS.MODEL,
-      voice: ELEVENLABS_CONSTANTS.TTS.VOICE_ID,
-    });
+  try {
+    const audioStream = await client.generate(
+      {
+        voice: ELEVENLABS_CONSTANTS.TTS.VOICE_ID,
+        model_id: ELEVENLABS_CONSTANTS.TTS.MODEL,
+        text: script,
+      }
+    );
 
     const chunks: Buffer[] = [];
     for await (const chunk of audioStream) {
@@ -64,87 +58,94 @@ async function generateAudioWithElevenLabs(text: string): Promise<Buffer> {
     }
 
     return Buffer.concat(chunks);
-  } catch (error: any) {
-    console.error('Error synthesizing audio:', {
-      error,
-      message: error?.message,
-      stack: error?.stack
-    });
+  } catch (error) {
+    console.error('Error generating audio:', error);
     throw error;
   }
 }
 
 async function generateVideoWithHedra(audioUrl: string): Promise<string> {
-  // Upload audio to Hedra
-  const audioResponse = await fetch(`${HEDRA_BASE_URL}/v1/audio`, {
+  // Create video generation request
+  const response = await fetch(`${HEDRA_BASE_URL}/videos`, {
     method: 'POST',
     headers: {
-      'X-API-KEY': hedraApiKey,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url: audioUrl }),
-  });
-
-  if (!audioResponse.ok) {
-    throw new Error(`Hedra audio upload failed: ${await audioResponse.text()}`);
-  }
-
-  const { url: hedraAudioUrl } = await audioResponse.json();
-
-  // Generate video
-  const videoResponse = await fetch(`${HEDRA_BASE_URL}/v1/characters`, {
-    method: 'POST',
-    headers: {
-      'X-API-KEY': hedraApiKey,
+      'X-API-KEY': hedraApiKey.value(),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      avatarImage: REFERENCE_IMAGE_URL,
-      audioSource: "audio",
-      voiceUrl: hedraAudioUrl,
-      aspectRatio: "16:9",
-      text: "",
-      voiceId: null,
+      audio_url: audioUrl,
+      reference_image_url: REFERENCE_IMAGE_URL,
     }),
   });
 
-  if (!videoResponse.ok) {
-    throw new Error(`Hedra video generation failed: ${await videoResponse.text()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to create video: ${response.statusText}`);
   }
 
-  const { jobId } = await videoResponse.json();
-  console.log('Video generation started:', jobId);
+  const data = await response.json();
+  const videoId = data.id;
 
-  // Poll for completion (max 5 minutes)
-  for (let i = 0; i < 30; i++) {
-    const statusResponse = await fetch(`${HEDRA_BASE_URL}/v1/projects/${jobId}`, {
-      headers: { 'X-API-KEY': hedraApiKey },
+  // Poll for completion (max 9 minutes to leave buffer for other operations)
+  for (let i = 0; i < 54; i++) { // 54 iterations * 10 seconds = 540 seconds (9 minutes)
+    const statusResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}`, {
+      method: 'GET',
+      headers: {
+        'X-API-KEY': hedraApiKey.value(),
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!statusResponse.ok) {
-      throw new Error(`Failed to check video status: ${await statusResponse.text()}`);
+      throw new Error(`Failed to check video status: ${statusResponse.statusText}`);
     }
 
-    const status = await statusResponse.json();
-    console.log('Video status:', status.status);
+    const statusData = await statusResponse.json();
 
-    if (status.status === 'Completed' && status.videoUrl) {
-      return status.videoUrl;
-    } else if (status.status === 'failed') {
-      throw new Error(status.errorMessage || 'Video generation failed');
+    if (statusData.status === 'completed') {
+      // Get video URL
+      const videoResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}/download`, {
+        method: 'GET',
+        headers: {
+          'X-API-KEY': hedraApiKey.value(),
+        },
+      });
+
+      if (!videoResponse.ok) {
+        throw new Error(`Failed to get video URL: ${videoResponse.statusText}`);
+      }
+
+      const videoData = await videoResponse.json();
+      return videoData.url;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds before next check
+    if (statusData.status === 'failed') {
+      throw new Error('Video generation failed');
+    }
+
+    // Wait 10 seconds before next poll
+    await new Promise(resolve => setTimeout(resolve, 10000));
   }
 
   throw new Error('Video generation timed out');
 }
 
-export const generateVideo = functions.firestore
-  .document('quiz_results/{userId}')
-  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
-    const quizData = snap.data() as QuizResultData;
-    const userId = context.params.userId;
+export const generateVideo = onDocumentCreated(
+  {
+    document: 'quiz_results/{userId}',
+    region: 'us-central1',
+    memory: '2GiB',
+    timeoutSeconds: 540,
+    secrets: [elevenlabsApiKey, hedraApiKey],
+  },
+  async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) {
+      console.log('No data associated with the event');
+      return;
+    }
+
+    const quizData = snapshot.data() as QuizResultData;
+    const userId = event.params.userId;
     
     // Create a document to track video generation progress
     const videoRef = admin.firestore().collection('video_generations').doc(userId);
@@ -239,4 +240,5 @@ export const generateVideo = functions.firestore
       
       return { success: false, error: errorMessage };
     }
-  }); 
+  }
+); 

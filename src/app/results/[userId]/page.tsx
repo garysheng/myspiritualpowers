@@ -18,6 +18,7 @@ import { SharePreview } from '@/components/share/share-preview';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getCachedImage } from '@/lib/image-cache';
+import { VideoPlayer } from '@/components/video/video-player';
 
 interface ShareBarElement extends HTMLElement {
   handleGenerateImage?: () => void;
@@ -144,6 +145,11 @@ export default function ResultsPage() {
               Spiritual Powers Quiz Results for {results.displayName}
             </h1>
           </div>
+        )}
+
+        {/* Video Section */}
+        {userId && (
+          <VideoPlayer userId={userId as string} />
         )}
 
         {/* Spiritual Archetype Card */}
