@@ -29,6 +29,7 @@ interface VideoGenerationData {
   status: 'pending' | 'audio_generated' | 'video_generated' | 'complete' | 'error';
   audioUrl?: string;
   videoUrl?: string;
+  thumbnailUrl?: string;
   error?: string;
   createdAt: admin.firestore.Timestamp;
   updatedAt: admin.firestore.Timestamp;
@@ -222,6 +223,34 @@ async function generateVideoWithHedra(audioUrl: string): Promise<string> {
   }
 }
 
+async function generateThumbnail(videoBuffer: Buffer): Promise<Buffer> {
+  // Use ffmpeg to extract a frame from the middle of the video
+  const ffmpeg = require('fluent-ffmpeg');
+  const stream = require('stream');
+
+  return new Promise((resolve, reject) => {
+    const bufferStream = new stream.PassThrough();
+    bufferStream.end(videoBuffer);
+
+    ffmpeg(bufferStream)
+      .screenshots({
+        timestamps: ['50%'], // Take screenshot from middle of video
+        filename: 'thumbnail.jpg',
+        folder: '/tmp',
+        size: '640x360' // 16:9 aspect ratio thumbnail
+      })
+      .on('end', async () => {
+        try {
+          const thumbnailBuffer = await admin.storage().bucket().file('/tmp/thumbnail.jpg').download();
+          resolve(thumbnailBuffer[0]);
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', (err: Error) => reject(err));
+  });
+}
+
 export const generateVideo2 = onDocumentCreated(
   {
     document: 'quiz_results/{userId}',
@@ -291,26 +320,45 @@ export const generateVideo2 = onDocumentCreated(
         const videoResponse = await fetch(hedraVideoUrl);
         const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
 
-        // Upload to Firebase Storage
+        // Generate thumbnail
+        const thumbnailBuffer = await generateThumbnail(videoBuffer);
+
+        // Upload video and thumbnail to Firebase Storage
         const videoFileName = `video_generations/${userId}/video.mp4`;
+        const thumbnailFileName = `video_generations/${userId}/thumbnail.jpg`;
         const videoFile = bucket.file(videoFileName);
+        const thumbnailFile = bucket.file(thumbnailFileName);
 
-        await videoFile.save(videoBuffer, {
-          metadata: {
-            contentType: 'video/mp4',
-          },
-        });
+        await Promise.all([
+          videoFile.save(videoBuffer, {
+            metadata: {
+              contentType: 'video/mp4',
+            },
+          }),
+          thumbnailFile.save(thumbnailBuffer, {
+            metadata: {
+              contentType: 'image/jpeg',
+            },
+          }),
+        ]);
 
-        // Get the public URL for the video
-        const [videoUrl] = await videoFile.getSignedUrl({
-          action: 'read',
-          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
-        });
+        // Get signed URLs for both files
+        const [[videoUrl], [thumbnailUrl]] = await Promise.all([
+          videoFile.getSignedUrl({
+            action: 'read',
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+          }),
+          thumbnailFile.getSignedUrl({
+            action: 'read',
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+          }),
+        ]);
 
-        // Update status to complete
+        // Update status to complete with both URLs
         await videoRef.update({
           status: 'complete',
           videoUrl,
+          thumbnailUrl,
           updatedAt: admin.firestore.Timestamp.now(),
         });
 
@@ -420,30 +468,49 @@ export const generateVideoManual2 = onCall(
         const videoResponse = await fetch(hedraVideoUrl);
         const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
 
+        // Generate thumbnail
+        const thumbnailBuffer = await generateThumbnail(videoBuffer);
+
         // Upload to Firebase Storage using Admin SDK
         const videoFileName = `video_generations/${userId}/video.mp4`;
+        const thumbnailFileName = `video_generations/${userId}/thumbnail.jpg`;
         const videoFile = bucket.file(videoFileName);
+        const thumbnailFile = bucket.file(thumbnailFileName);
 
-        await videoFile.save(videoBuffer, {
-          metadata: {
-            contentType: 'video/mp4',
-          },
-        });
+        await Promise.all([
+          videoFile.save(videoBuffer, {
+            metadata: {
+              contentType: 'video/mp4',
+            },
+          }),
+          thumbnailFile.save(thumbnailBuffer, {
+            metadata: {
+              contentType: 'image/jpeg',
+            },
+          }),
+        ]);
 
-        // Get a signed URL that expires in 1 week
-        const [videoUrl] = await videoFile.getSignedUrl({
-          action: 'read',
-          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
-        });
+        // Get signed URLs for both files
+        const [[videoUrl], [thumbnailUrl]] = await Promise.all([
+          videoFile.getSignedUrl({
+            action: 'read',
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+          }),
+          thumbnailFile.getSignedUrl({
+            action: 'read',
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+          }),
+        ]);
 
-        // Update status to complete
+        // Update status to complete with both URLs
         await videoRef.update({
           status: 'complete',
           videoUrl,
+          thumbnailUrl,
           updatedAt: admin.firestore.Timestamp.now(),
         });
 
-        return { success: true, videoUrl };
+        return { success: true, videoUrl, thumbnailUrl };
       } catch (videoError) {
         console.error('Error generating video:', videoError);
         await videoRef.update({

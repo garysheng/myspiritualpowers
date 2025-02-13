@@ -12,6 +12,7 @@ interface VideoGenerationData {
   status: 'pending' | 'audio_generated' | 'video_generated' | 'complete' | 'error';
   audioUrl?: string;
   videoUrl?: string;
+  thumbnailUrl?: string;
   error?: string;
 }
 
@@ -188,12 +189,12 @@ export function VideoPlayer({ userId }: VideoPlayerProps) {
       return (
         <Card>
           <CardContent className="pt-6">
-            <div className="aspect-video relative overflow-hidden rounded-lg">
+            <div className="aspect-video relative overflow-hidden rounded-lg bg-black">
               <video
                 src={videoData.videoUrl}
+                poster={videoData.thumbnailUrl}
                 controls
                 className="w-full h-full"
-                poster="/video-poster.jpg"
               >
                 Your browser does not support the video tag.
               </video>
