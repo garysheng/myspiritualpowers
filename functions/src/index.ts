@@ -121,7 +121,7 @@ async function generateVideoWithHedra(audioUrl: string): Promise<string> {
       contentType: 'image/png'
     });
 
-    const portraitUploadResponse = await fetch(`${HEDRA_BASE_URL}/v1/portrait`, {
+    const portraitUploadResponse = await fetch(`${HEDRA_BASE_URL}/v1/portrait?aspect_ratio=16:9`, {
       method: 'POST',
       headers: {
         'X-API-KEY': hedraApiKey.value(),
