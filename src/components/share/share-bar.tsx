@@ -8,7 +8,6 @@ import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import html2canvas from 'html2canvas';
 import { EmailInviteDialog } from './email-invite-dialog';
 import { getCachedImage, setCachedImage } from '@/lib/image-cache';
-import Image from 'next/image';
 
 interface ShareBarProps {
   userId: string;

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Mail, LogOut } from 'lucide-react';
+import { Users, Mail, LogOut, Sparkles, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
@@ -12,6 +12,7 @@ import { UserProfile } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmailInviteDialog } from '@/components/share/email-invite-dialog';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -87,16 +88,37 @@ export default function ProfilePage() {
                 </div>
               </div>
               <Button 
-                variant="ghost" 
-                size="icon"
+                variant="destructive" 
                 onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                className="gap-2"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4" />
+                Sign Out
               </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Results Link Card */}
+        <Link href={`/results/${user.uid}`}>
+          <Card className="relative overflow-hidden group hover:border-primary/50 transition-colors">
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">View Your Spiritual Powers</h2>
+                    <p className="text-muted-foreground">See your archetype, gifts, and personalized insights</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Referral Stats */}
         <Card>
