@@ -296,17 +296,21 @@ export const generateVideoManual2 = onCall(
       // Generate audio with ElevenLabs
       const audioBuffer = await generateAudioWithElevenLabs(quizData.videoScript.script);
 
-      // Upload audio to Firebase Storage
+      // Upload audio to Firebase Storage using Admin SDK
       const bucket = admin.storage().bucket();
       const audioFileName = `video_generations/${userId}/audio.mp3`;
       const audioFile = bucket.file(audioFileName);
       
-      await audioFile.save(audioBuffer);
-      
-      // Get the public URL for the audio file
+      await audioFile.save(audioBuffer, {
+        metadata: {
+          contentType: 'audio/mpeg',
+        },
+      });
+
+      // Get a signed URL that expires in 1 hour
       const [audioUrl] = await audioFile.getSignedUrl({
         action: 'read',
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
+        expires: Date.now() + 60 * 60 * 1000, // 1 hour
       });
 
       // Update video generation status
@@ -324,7 +328,7 @@ export const generateVideoManual2 = onCall(
         const videoResponse = await fetch(hedraVideoUrl);
         const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
 
-        // Upload to Firebase Storage
+        // Upload to Firebase Storage using Admin SDK
         const videoFileName = `video_generations/${userId}/video.mp4`;
         const videoFile = bucket.file(videoFileName);
         
@@ -334,7 +338,7 @@ export const generateVideoManual2 = onCall(
           },
         });
 
-        // Get the public URL for the video
+        // Get a signed URL that expires in 1 week
         const [videoUrl] = await videoFile.getSignedUrl({
           action: 'read',
           expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week
