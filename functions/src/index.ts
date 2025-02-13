@@ -4,6 +4,7 @@ import * as admin from 'firebase-admin';
 import { ElevenLabsClient } from 'elevenlabs';
 import fetch from 'node-fetch';
 import { defineSecret } from 'firebase-functions/params';
+import FormData from 'form-data';
 
 admin.initializeApp();
 
@@ -67,96 +68,158 @@ async function generateAudioWithElevenLabs(script: string): Promise<Buffer> {
 
 async function generateVideoWithHedra(audioUrl: string): Promise<string> {
   console.log('Starting video generation with Hedra');
-  
-  // Create video generation request
-  const response = await fetch(`${HEDRA_BASE_URL}/videos`, {
-    method: 'POST',
-    headers: {
-      'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      audio_url: audioUrl,
-      reference_image_url: REFERENCE_IMAGE_URL,
-    }),
-  });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Hedra video creation failed:', {
-      status: response.status,
-      statusText: response.statusText,
-      errorText,
+  try {
+    // 1. Upload audio to Hedra
+    console.log('Uploading audio to Hedra');
+    const audioResponse = await fetch(audioUrl);
+    if (!audioResponse.ok) {
+      throw new Error('Failed to fetch audio from Firebase Storage');
+    }
+    const audioBuffer = await audioResponse.arrayBuffer();
+
+    const audioFormData = new FormData();
+    audioFormData.append('file', Buffer.from(audioBuffer), {
+      filename: 'audio.mp3',
+      contentType: 'audio/mp3'
     });
-    throw new Error(`Failed to create video: ${response.statusText}. ${errorText}`);
-  }
 
-  const data = await response.json();
-  console.log('Hedra video creation response:', data);
-  const videoId = data.id;
-
-  // Poll for completion (max 9 minutes to leave buffer for other operations)
-  for (let i = 0; i < 54; i++) { // 54 iterations * 10 seconds = 540 seconds (9 minutes)
-    console.log(`Checking video status (attempt ${i + 1}/54)`);
-    
-    const statusResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}`, {
-      method: 'GET',
+    const hedraAudioResponse = await fetch(`${HEDRA_BASE_URL}/v1/audio`, {
+      method: 'POST',
       headers: {
-        'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
-        'Content-Type': 'application/json',
+        'X-API-KEY': hedraApiKey.value(),
+        ...audioFormData.getHeaders()
       },
+      body: audioFormData
     });
 
-    if (!statusResponse.ok) {
-      const errorText = await statusResponse.text();
-      console.error('Hedra status check failed:', {
-        status: statusResponse.status,
-        statusText: statusResponse.statusText,
-        errorText,
+    if (!hedraAudioResponse.ok) {
+      const errorText = await hedraAudioResponse.text();
+      console.error('Hedra audio upload failed:', {
+        status: hedraAudioResponse.status,
+        statusText: hedraAudioResponse.statusText,
+        error: errorText
       });
-      throw new Error(`Failed to check video status: ${statusResponse.statusText}. ${errorText}`);
+      throw new Error(`Hedra audio upload failed: ${errorText}`);
     }
 
-    const statusData = await statusResponse.json();
-    console.log('Video status:', statusData);
+    const audioJson = await hedraAudioResponse.json();
+    const { url: audioUrlFromHedra } = audioJson;
+    console.log('Successfully uploaded audio to Hedra', { audioUrl: audioUrlFromHedra });
 
-    if (statusData.status === 'completed') {
-      console.log('Video generation completed, fetching download URL');
-      
-      // Get video URL
-      const videoResponse = await fetch(`${HEDRA_BASE_URL}/videos/${videoId}/download`, {
-        method: 'GET',
-        headers: {
-          'X-API-KEY': encodeURIComponent(hedraApiKey.value()),
-        },
+    // 2. Upload reference image to Hedra
+    console.log('Uploading reference image to Hedra');
+    const imageResponse = await fetch(REFERENCE_IMAGE_URL);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to fetch reference image');
+    }
+    const imageBuffer = await imageResponse.arrayBuffer();
+
+    const imageFormData = new FormData();
+    imageFormData.append('file', Buffer.from(imageBuffer), {
+      filename: 'portrait.png',
+      contentType: 'image/png'
+    });
+
+    const portraitUploadResponse = await fetch(`${HEDRA_BASE_URL}/v1/portrait`, {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': hedraApiKey.value(),
+        ...imageFormData.getHeaders()
+      },
+      body: imageFormData
+    });
+
+    if (!portraitUploadResponse.ok) {
+      const errorText = await portraitUploadResponse.text();
+      console.error('Hedra portrait upload failed:', {
+        status: portraitUploadResponse.status,
+        statusText: portraitUploadResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Hedra portrait upload failed: ${errorText}`);
+    }
+
+    const portraitJson = await portraitUploadResponse.json();
+    const { url: portraitUrlFromHedra } = portraitJson;
+    console.log('Successfully uploaded portrait to Hedra', { portraitUrl: portraitUrlFromHedra });
+
+    // 3. Generate video
+    console.log('Initiating video generation');
+    const videoResponse = await fetch(`${HEDRA_BASE_URL}/v1/characters`, {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': hedraApiKey.value(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        avatarImage: portraitUrlFromHedra,
+        audioSource: "audio",
+        voiceUrl: audioUrlFromHedra,
+        aspectRatio: "16:9",
+        text: "",
+        voiceId: null
+      })
+    });
+
+    if (!videoResponse.ok) {
+      const errorText = await videoResponse.text();
+      console.error('Hedra video generation request failed:', {
+        status: videoResponse.status,
+        statusText: videoResponse.statusText,
+        error: errorText
+      });
+      throw new Error(`Hedra video generation failed: ${errorText}`);
+    }
+
+    const videoJson = await videoResponse.json();
+    const { jobId } = videoJson;
+    console.log('Video generation initiated', { jobId });
+
+    // 4. Poll for completion
+    for (let i = 0; i < 48; i++) {
+      console.log(`Checking video status (attempt ${i + 1}/48)`);
+
+      const statusResponse = await fetch(`${HEDRA_BASE_URL}/v1/projects/${jobId}`, {
+        headers: { 'X-API-KEY': hedraApiKey.value() }
       });
 
-      if (!videoResponse.ok) {
-        const errorText = await videoResponse.text();
-        console.error('Hedra video download failed:', {
-          status: videoResponse.status,
-          statusText: videoResponse.statusText,
-          errorText,
+      if (!statusResponse.ok) {
+        const errorText = await statusResponse.text();
+        console.error('Failed to check video status:', {
+          jobId,
+          status: statusResponse.status,
+          statusText: statusResponse.statusText,
+          error: errorText
         });
-        throw new Error(`Failed to get video URL: ${videoResponse.statusText}. ${errorText}`);
+        throw new Error(`Failed to check video status: ${errorText}`);
       }
 
-      const videoData = await videoResponse.json();
-      console.log('Got video download URL');
-      return videoData.url;
+      const status = await statusResponse.json();
+      console.log('Video status:', status);
+
+      if (status.status === 'Completed' && status.videoUrl) {
+        console.log('Video generation completed', { videoUrl: status.videoUrl });
+        return status.videoUrl;
+      }
+
+      if (status.status === 'failed' || status.errorMessage) {
+        console.error('Video generation failed:', {
+          jobId,
+          error: status.errorMessage || 'No error details provided'
+        });
+        throw new Error(`Video generation failed: ${status.errorMessage || 'Unknown error'}`);
+      }
+
+      // Wait 10 seconds before next check
+      await new Promise(resolve => setTimeout(resolve, 10000));
     }
 
-    if (statusData.status === 'failed') {
-      console.error('Hedra video generation failed:', statusData);
-      throw new Error(`Video generation failed: ${statusData.error || 'Unknown error'}`);
-    }
-
-    // Wait 10 seconds before next poll
-    console.log('Waiting 10 seconds before next status check...');
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    throw new Error('Video generation timed out');
+  } catch (error) {
+    console.error('Error in video generation:', error);
+    throw error;
   }
-
-  throw new Error('Video generation timed out');
 }
 
 export const generateVideo2 = onDocumentCreated(
@@ -170,7 +233,7 @@ export const generateVideo2 = onDocumentCreated(
   async (event) => {
     console.log('Function triggered with event params:', event.params);
     console.log('Document path:', `quiz_results/${event.params.userId}`);
-    
+
     const snapshot = event.data;
     if (!snapshot) {
       console.log('No data associated with the event');
@@ -181,10 +244,10 @@ export const generateVideo2 = onDocumentCreated(
     console.log('Quiz data:', quizData);
     const userId = event.params.userId;
     console.log('User ID:', userId);
-    
+
     // Create a document to track video generation progress
     const videoRef = admin.firestore().collection('video_generations').doc(userId);
-    
+
     try {
       // Initialize video generation tracking
       const videoData: VideoGenerationData = {
@@ -194,7 +257,7 @@ export const generateVideo2 = onDocumentCreated(
         createdAt: admin.firestore.Timestamp.now(),
         updatedAt: admin.firestore.Timestamp.now(),
       };
-      
+
       await videoRef.set(videoData);
 
       // Generate audio with ElevenLabs
@@ -204,9 +267,9 @@ export const generateVideo2 = onDocumentCreated(
       const bucket = admin.storage().bucket();
       const audioFileName = `video_generations/${userId}/audio.mp3`;
       const audioFile = bucket.file(audioFileName);
-      
+
       await audioFile.save(audioBuffer);
-      
+
       // Get the public URL for the audio file
       const [audioUrl] = await audioFile.getSignedUrl({
         action: 'read',
@@ -223,7 +286,7 @@ export const generateVideo2 = onDocumentCreated(
       // Generate video with Hedra
       try {
         const hedraVideoUrl = await generateVideoWithHedra(audioUrl);
-        
+
         // Download video from Hedra
         const videoResponse = await fetch(hedraVideoUrl);
         const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
@@ -231,7 +294,7 @@ export const generateVideo2 = onDocumentCreated(
         // Upload to Firebase Storage
         const videoFileName = `video_generations/${userId}/video.mp4`;
         const videoFile = bucket.file(videoFileName);
-        
+
         await videoFile.save(videoBuffer, {
           metadata: {
             contentType: 'video/mp4',
@@ -263,16 +326,16 @@ export const generateVideo2 = onDocumentCreated(
       return { success: true };
     } catch (error: unknown) {
       console.error('Error in video generation process:', error);
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
+
       // Update video generation status with error
       await videoRef.update({
         status: 'error',
         error: errorMessage,
         updatedAt: admin.firestore.Timestamp.now(),
       });
-      
+
       return { success: false, error: errorMessage };
     }
   }
@@ -301,16 +364,16 @@ export const generateVideoManual2 = onCall(
     try {
       // Get the quiz result document
       const quizDoc = await admin.firestore().collection('quiz_results').doc(userId).get();
-      
+
       if (!quizDoc.exists) {
         throw new Error('Quiz results not found');
       }
 
       const quizData = quizDoc.data() as QuizResultData;
-      
+
       // Create a document to track video generation progress
       const videoRef = admin.firestore().collection('video_generations').doc(userId);
-      
+
       // Initialize video generation tracking
       const videoData: VideoGenerationData = {
         userId,
@@ -319,7 +382,7 @@ export const generateVideoManual2 = onCall(
         createdAt: admin.firestore.Timestamp.now(),
         updatedAt: admin.firestore.Timestamp.now(),
       };
-      
+
       await videoRef.set(videoData);
 
       // Generate audio with ElevenLabs
@@ -329,7 +392,7 @@ export const generateVideoManual2 = onCall(
       const bucket = admin.storage().bucket();
       const audioFileName = `video_generations/${userId}/audio.mp3`;
       const audioFile = bucket.file(audioFileName);
-      
+
       await audioFile.save(audioBuffer, {
         metadata: {
           contentType: 'audio/mpeg',
@@ -352,7 +415,7 @@ export const generateVideoManual2 = onCall(
       // Generate video with Hedra
       try {
         const hedraVideoUrl = await generateVideoWithHedra(audioUrl);
-        
+
         // Download video from Hedra
         const videoResponse = await fetch(hedraVideoUrl);
         const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
@@ -360,7 +423,7 @@ export const generateVideoManual2 = onCall(
         // Upload to Firebase Storage using Admin SDK
         const videoFileName = `video_generations/${userId}/video.mp4`;
         const videoFile = bucket.file(videoFileName);
-        
+
         await videoFile.save(videoBuffer, {
           metadata: {
             contentType: 'video/mp4',
