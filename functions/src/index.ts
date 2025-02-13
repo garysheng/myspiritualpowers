@@ -1,5 +1,5 @@
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
-import { onRequest } from 'firebase-functions/v2/https';
+import { onCall } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import { ElevenLabsClient } from 'elevenlabs';
 import fetch from 'node-fetch';
@@ -249,25 +249,22 @@ export const generateVideo2 = onDocumentCreated(
   }
 );
 
-// New HTTP function for manual video generation
-export const generateVideoManual = onRequest(
+// Manual video generation function
+export const generateVideoManual2 = onCall(
   {
-    region: 'us-central1',
-    memory: '2GiB',
-    timeoutSeconds: 540,
+    enforceAppCheck: false,
     secrets: [elevenlabsApiKey, hedraApiKey],
+    timeoutSeconds: 540,
   },
-  async (req, res) => {
-    // Only allow POST requests
-    if (req.method !== 'POST') {
-      res.status(405).send('Method Not Allowed');
-      return;
+  async (request) => {
+    // Verify auth
+    if (!request.auth) {
+      throw new Error('Unauthorized');
     }
 
-    const userId = req.body.userId;
+    const userId = request.data.userId;
     if (!userId) {
-      res.status(400).send('Missing userId in request body');
-      return;
+      throw new Error('Missing userId in request data');
     }
 
     console.log('Manual video generation triggered for user:', userId);
@@ -277,8 +274,7 @@ export const generateVideoManual = onRequest(
       const quizDoc = await admin.firestore().collection('quiz_results').doc(userId).get();
       
       if (!quizDoc.exists) {
-        res.status(404).send('Quiz results not found');
-        return;
+        throw new Error('Quiz results not found');
       }
 
       const quizData = quizDoc.data() as QuizResultData;
@@ -351,7 +347,7 @@ export const generateVideoManual = onRequest(
           updatedAt: admin.firestore.Timestamp.now(),
         });
 
-        res.json({ success: true, videoUrl });
+        return { success: true, videoUrl };
       } catch (videoError) {
         console.error('Error generating video:', videoError);
         await videoRef.update({
@@ -359,15 +355,12 @@ export const generateVideoManual = onRequest(
           error: videoError instanceof Error ? videoError.message : 'Video generation failed',
           updatedAt: admin.firestore.Timestamp.now(),
         });
-        res.status(500).json({ 
-          success: false, 
-          error: videoError instanceof Error ? videoError.message : 'Video generation failed' 
-        });
+        throw videoError;
       }
     } catch (error: unknown) {
       console.error('Error in video generation process:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      res.status(500).json({ success: false, error: errorMessage });
+      throw new Error(errorMessage);
     }
   }
 ); 
