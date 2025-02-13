@@ -129,7 +129,7 @@ async function generateVideoWithHedra(audioUrl: string): Promise<string> {
   throw new Error('Video generation timed out');
 }
 
-export const generateVideo = onDocumentCreated(
+export const generateVideo2 = onDocumentCreated(
   {
     document: 'quiz_results/{userId}',
     region: 'us-central1',
