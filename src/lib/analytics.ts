@@ -20,7 +20,6 @@ export const AnalyticsEvents = {
   RESULTS_VIEWED: 'results_viewed',
   RESULTS_SHARED: 'results_shared',
   RESULTS_DOWNLOADED: 'results_downloaded',
-  COMMUNITY_CTA_CLICKED: 'community_cta_clicked',
   RESULTS_RATED: 'results_rated',
   BIBLE_REFERENCE_CLICKED: 'bible_reference_clicked',
   WELCOME_NEXT: 'welcome_next',

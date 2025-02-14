@@ -460,44 +460,6 @@ export default function ResultsPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Community Card */}
-        <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
-          <CardContent className="space-y-8 relative py-8">
-            <div className="text-center space-y-6">
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground font-medium">This quiz was brought to you by</p>
-                <div className="flex items-center justify-center gap-2">
-                  <Users className="w-6 h-6 text-violet-400" />
-                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
-                    TRUTH IN THE WYLD
-                  </h2>
-                </div>
-              </div>
-
-              <div className="max-w-2xl mx-auto space-y-6">
-                <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm">
-                  <p className="text-lg leading-relaxed">
-                    A sanctuary for Millennials and Gen Z seeking divine truth in an era of AI and rapid change. We&apos;re building a community where the metaphysical, emotionally intelligent, and counter-cultural can find guidance and solidarity.
-                  </p>
-                </div>
-
-                <div className="flex justify-center pt-4">
-                  <a
-                    href="https://truthinthewyld.com?ref=myspiritualpowers.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackEvent(AnalyticsEvents.COMMUNITY_CTA_CLICKED)}
-                    className="inline-flex items-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg hover:from-violet-500 hover:to-indigo-500 transition-all duration-200 shadow-lg hover:shadow-violet-500/25"
-                  >
-                    Join Our Community
-                  </a>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Share Bar */}
