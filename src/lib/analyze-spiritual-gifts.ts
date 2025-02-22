@@ -7,8 +7,14 @@ interface LLMAnalysisResult {
   archetype: {
     name: string;
     description: string;
-    biblicalExample: string;
-    modernApplication: string;
+    biblicalExample: {
+      concise: string;
+      detailed: string;
+    };
+    modernApplication: {
+      concise: string;
+      detailed: string;
+    };
   };
   insights: {
     summary: string;
@@ -35,8 +41,14 @@ export async function analyzeSpiritualGifts(
     "archetype": {
       "name": "A creative name for their spiritual power archetype based on their gift combination",
       "description": "A paragraph describing this archetype and how their gifts work together",
-      "biblicalExample": "A biblical figure who demonstrated a similar combination of gifts",
-      "modernApplication": "How this archetype can be effectively used in today's world"
+      "biblicalExample": {
+        "concise": "One powerful sentence summarizing the biblical figure and their key relevant story. Example: 'Like Samuel who heard God's voice and guided Israel with prophetic wisdom (1 Samuel 3:1-18).' or 'Like Barnabas who used discernment to advocate for Paul when others were skeptical (Acts 9:26-27).'",
+        "detailed": "Write exactly three sentences: First sentence simply states the biblical figure's name. Second sentence describes a specific story showing these gifts in action with scripture reference. Third sentence explains how this connects to the person's gift combination. Example: 'Samuel. As a young boy, Samuel heard God's voice and delivered difficult messages to Eli, demonstrating both his prophetic and pastoral gifts (1 Samuel 3:1-18). Like Samuel, your combination of prophecy and pastoral care enables you to deliver truth with wisdom and compassion.'"
+      },
+      "modernApplication": {
+        "concise": "One powerful sentence describing how this gift combination can be used today. Example: 'You can be a transformative leader who combines prophetic insight with pastoral care to guide others through times of change.' or 'Your unique ability to discern potential in others while offering encouragement makes you invaluable in mentoring and community building.'",
+        "detailed": "Write exactly three sentences describing modern applications. First sentence should focus on primary impact area. Second sentence should give specific examples. Third sentence should inspire action. Example: 'Your gift combination is perfectly suited for transformational leadership in today's complex world. You can guide faith communities through change by combining prophetic insight with pastoral sensitivity, whether in counseling sessions, group discussions, or strategic planning. Your ability to both see God's direction and shepherd people with compassion positions you to be a crucial bridge-builder in times of transition.'"
+      }
     },
     "insights": {
       "summary": "A personalized paragraph analyzing their unique combination of gifts, addressing ${displayName} by name",
@@ -46,14 +58,14 @@ export async function analyzeSpiritualGifts(
     },
     "videoScript": {
       "title": "A catchy title for the celebration video",
-      "script": "Write an engaging 30-45 second video script that celebrates ${displayName}'s spiritual archetype discovery. The script should: 1) Start with an exciting hook about their archetype, 2) Reference the biblical figure who shared similar gifts, 3) Highlight their unique combination of spiritual powers, 4) End with an inspiring call to action about using their gifts. Use a mix of celebration and inspiration in the tone."
+      "script": "Write an engaging 30-45 second video script that celebrates ${displayName}'s spiritual archetype discovery. The script should: 1) Start with an exciting hook about their archetype, 2) Reference the biblical figure who shared similar gifts, including a specific story that demonstrates these gifts in action, 3) Highlight their unique combination of spiritual powers, 4) End with an inspiring call to action about using their gifts. Use a mix of celebration and inspiration in the tone."
     }
   }
 
   Quiz responses: ${JSON.stringify(responses, null, 2)}
   Top Spiritual Gifts: ${JSON.stringify(topGifts, null, 2)}
 
-  Make the analysis personal, practical, and encouraging. Focus on how their unique combination of gifts can be used effectively in both church and daily life.`;
+  Make the analysis personal, practical, and encouraging. Focus on how their unique combination of gifts can be used effectively in both faith community and daily life.`;
 
   try {
     const result = await model.generateContent(prompt);

@@ -76,18 +76,6 @@ export const ResultsEmail = ({
             
             <Hr style={divider} />
             
-            {/* Community Footer */}
-            <Text style={communitySection}>
-              Join the Community!
-            </Text>
-            <Text style={paragraph}>
-              Connect with others who have discovered their spiritual gifts and are on a journey of growth and impact. Explore{' '}
-              <Link href="https://truthinthewyld.com" style={link}>truthinthewyld.com</Link>{' '}
-              to be part of a vibrant community of believers using their spiritual powers for God&apos;s kingdom.
-            </Text>
-            
-            <Hr style={divider} />
-            
             <Text style={footer}>
               This email was sent from My Spiritual Powers. Visit{' '}
               <Link href="https://myspiritualpowers.com" style={link}>myspiritualpowers.com</Link>
@@ -132,15 +120,6 @@ const subheading = {
   color: '#2d3748',
   marginTop: '24px',
   marginBottom: '16px',
-};
-
-const communitySection = {
-  fontSize: '18px',
-  fontWeight: '600',
-  color: '#4f46e5',
-  marginTop: '24px',
-  marginBottom: '12px',
-  textAlign: 'center' as const,
 };
 
 const paragraph = {

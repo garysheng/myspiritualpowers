@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
 import { FloatingRating } from '@/components/rating/floating-rating';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
-import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass, Users, Image, Mail } from 'lucide-react';
+import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass, Image, Mail } from 'lucide-react';
 import NextImage from 'next/image';
 import { SharePreview } from '@/components/share/share-preview';
 import { Button } from '@/components/ui/button';
@@ -176,7 +176,7 @@ export default function ResultsPage() {
                     Biblical Example
                   </h3>
                   <p className="text-muted-foreground text-lg">
-                    {results.spiritualArchetype.biblicalExample}
+                    {results.spiritualArchetype.biblicalExample.detailed}
                   </p>
                 </div>
                 <div className="bg-secondary/20 p-6 rounded-lg backdrop-blur-sm space-y-3">
@@ -185,7 +185,7 @@ export default function ResultsPage() {
                     Modern Application
                   </h3>
                   <p className="text-muted-foreground text-lg">
-                    {results.spiritualArchetype.modernApplication}
+                    {results.spiritualArchetype.modernApplication.detailed}
                   </p>
                 </div>
               </div>

@@ -25,16 +25,19 @@ export interface QuizResultBackend {
   userId: string;
   displayName: string;
   photoURL?: string;
-  responses: Array<{
-    questionId: string;
-    selectedOptionId: string;
-  }>;
+  responses: QuizResponse[];
   spiritualGifts: SpiritualGift[];
   spiritualArchetype: {
     name: string;
     description: string;
-    biblicalExample: string;
-    modernApplication: string;
+    biblicalExample: {
+      concise: string;
+      detailed: string;
+    };
+    modernApplication: {
+      concise: string;
+      detailed: string;
+    };
   };
   personalizedInsights: {
     summary: string;
@@ -42,15 +45,13 @@ export interface QuizResultBackend {
     recommendedMinistries: string[];
     growthAreas: string[];
   };
-  videoScript: {
+  rating?: number;
+  videoScript?: {
     title: string;
     script: string;
   };
-  rating?: number;
-  ratedAt?: Timestamp;
-  referredBy?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: Timestamp; // Firestore Timestamp
+  updatedAt: Timestamp; // Firestore Timestamp
 }
 
 // Frontend Types
@@ -70,8 +71,14 @@ export interface SpiritualGift {
 export interface SpiritualArchetype {
   name: string;
   description: string;
-  biblicalExample: string;
-  modernApplication: string;
+  biblicalExample: {
+    concise: string; // One sentence for PNG/sharing
+    detailed: string; // Three sentences for detailed view
+  };
+  modernApplication: {
+    concise: string; // One sentence for PNG/sharing
+    detailed: string; // Three sentences for detailed view
+  };
 }
 
 export interface PersonalizedInsights {

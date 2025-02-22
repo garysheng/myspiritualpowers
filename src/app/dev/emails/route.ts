@@ -33,7 +33,7 @@ const testData = {
   spiritualArchetype: {
     name: "Enlightened Guide",
     description: "You have a unique combination of gifts that positions you as a wise and effective teacher and leader. Your ability to understand and communicate truth, combined with your leadership capabilities, makes you particularly effective in guiding others toward spiritual growth and understanding.",
-    biblicalExample: "The Apostle Paul exemplified this archetype through his extensive teaching ministry and leadership of early churches, combining deep spiritual wisdom with practical leadership abilities.",
+    biblicalExample: "The Apostle Paul exemplified this archetype through his extensive teaching ministry and leadership of early faith communities, combining deep spiritual wisdom with practical leadership abilities.",
     modernApplication: "In today's context, you would excel in roles that combine teaching and leadership, such as leading small groups, developing training programs, or mentoring future leaders. Your wisdom gift adds depth to both your teaching and leadership."
   },
   personalizedInsights: {

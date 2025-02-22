@@ -127,7 +127,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-xl font-semibold">Community Impact</h3>
                   <p className="text-muted-foreground mt-2">
-                    Learn how your gifts can strengthen your church and community.
+                    Learn how your gifts can strengthen your faith community and the Body of Christ.
                   </p>
                 </div>
               </CardContent>
@@ -188,15 +188,15 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                quote: "This assessment revealed my true calling and showed me exactly how to serve effectively in my church community. It was like having a spiritual mentor guiding me to my purpose.",
+                quote: "This assessment revealed my true calling and showed me exactly how to serve effectively in my faith community. It was like having a spiritual mentor guiding me to my purpose.",
                 author: "Sarah M.",
-                role: "Ministry Leader",
+                role: "Elder",
                 gradient: "from-violet-500 via-primary to-indigo-500"
               },
               {
                 quote: "The depth of spiritual insight was remarkable. Not only did it identify my gifts, but it showed me practical ways to use them in both ministry and daily life.",
                 author: "David R.",
-                role: "Church Elder",
+                role: "Elder",
                 gradient: "from-blue-500 via-primary to-violet-500"
               },
               {

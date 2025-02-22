@@ -20,8 +20,14 @@ interface ShareBarProps {
   }>;
   displayName?: string;
   photoURL?: string;
-  biblicalExample?: string;
-  modernApplication?: string;
+  biblicalExample?: {
+    concise: string;
+    detailed: string;
+  };
+  modernApplication?: {
+    concise: string;
+    detailed: string;
+  };
 }
 
 export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayName, photoURL, biblicalExample, modernApplication }: ShareBarProps) {
@@ -405,7 +411,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                     lineHeight: '1.6',
                     textAlign: 'left',
                   }}>
-                    {biblicalExample}
+                    {biblicalExample?.concise}
                   </div>
                 </div>
 
@@ -433,7 +439,7 @@ export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayNa
                     lineHeight: '1.6',
                     textAlign: 'left',
                   }}>
-                    {modernApplication}
+                    {modernApplication?.concise}
                   </div>
                 </div>
               </div>
