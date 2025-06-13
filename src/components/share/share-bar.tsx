@@ -11,23 +11,9 @@ import Link from 'next/link';
 
 interface ShareBarProps {
   userId: string;
-  spiritualArchetype: string;
-  spiritualGifts: Array<{
-    name: string;
-    strength: number;
-  }>;
-  displayName?: string;
-  biblicalExample?: {
-    concise: string;
-    detailed: string;
-  };
-  modernApplication?: {
-    concise: string;
-    detailed: string;
-  };
 }
 
-export function ShareBar({ userId, spiritualArchetype, spiritualGifts, displayName, biblicalExample, modernApplication }: ShareBarProps) {
+export function ShareBar({ userId }: ShareBarProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const shareUrl = `https://myspiritualpowers.com/results/${userId}`;

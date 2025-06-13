@@ -343,11 +343,6 @@ export default function ResultsPage() {
       {results && (
         <ShareBar
           userId={userId as string}
-          spiritualArchetype={results.spiritualArchetype.name}
-          spiritualGifts={spiritualGifts}
-          displayName={results.displayName}
-          biblicalExample={results.spiritualArchetype.biblicalExample}
-          modernApplication={results.spiritualArchetype.modernApplication}
         />
       )}
     </div>
