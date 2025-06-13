@@ -12,17 +12,17 @@ import {
 interface InviteEmailProps {
   inviterName: string;
   inviterArchetype: string;
-  inviterTopGifts: Array<{ name: string; strength: number }>;
   customMessage?: string;
   inviteUrl: string;
+  inviterResultsUrl: string;
 }
 
 export const InviteEmail = ({
   inviterName,
   inviterArchetype,
-  inviterTopGifts,
   customMessage,
   inviteUrl,
+  inviterResultsUrl,
 }: InviteEmailProps) => {
   return (
     <Html>
@@ -36,18 +36,14 @@ export const InviteEmail = ({
               {inviterName} has invited you to discover your spiritual gifts! They recently completed our assessment and discovered their Spiritual Power Archetype: <strong>{inviterArchetype}</strong>
             </Text>
             
-            {/* Inviter's Top Gifts */}
+            {/* Link to Inviter's Results */}
             <Section style={messageSection}>
               <Text style={messageText}>
-                {inviterName}&apos;s Top Spiritual Gifts:
+                Want to see what {inviterName} discovered about their spiritual gifts?
               </Text>
-              <ul style={list}>
-                {inviterTopGifts.map((gift, index) => (
-                  <li key={index} style={giftItem}>
-                    <strong>{gift.name}</strong> - {gift.strength}% strength
-                  </li>
-                ))}
-              </ul>
+              <Link href={inviterResultsUrl} style={linkButton}>
+                View {inviterName}&apos;s Results
+              </Link>
             </Section>
 
             {/* Custom Message */}
@@ -197,7 +193,14 @@ const footer = {
   marginTop: '32px',
 };
 
-const giftItem = {
-  marginBottom: '8px',
-  color: '#4a5568',
+const linkButton = {
+  backgroundColor: '#4f46e5',
+  color: '#ffffff',
+  padding: '8px 16px',
+  borderRadius: '6px',
+  textDecoration: 'none',
+  fontSize: '14px',
+  fontWeight: '600',
+  display: 'inline-block',
+  marginTop: '8px',
 }; 

@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
 
     const quizResult = userDoc.data();
     const inviteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}?ref=${decodedToken.uid}`;
+    const inviterResultsUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/results/${decodedToken.uid}`;
     
     // Send emails in batches of 50 to avoid rate limits
     const batchSize = 50;
@@ -72,9 +73,9 @@ export async function POST(req: NextRequest) {
             react: InviteEmail({
               inviterName: decodedToken.name || 'Someone',
               inviterArchetype: quizResult.spiritualArchetype?.name || 'Spiritual Seeker',
-              inviterTopGifts: quizResult.spiritualGifts?.slice(0, 3) || [],
               customMessage,
               inviteUrl,
+              inviterResultsUrl,
             }),
           });
           return { email, status: 'success', data };

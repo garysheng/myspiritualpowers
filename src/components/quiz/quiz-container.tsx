@@ -246,7 +246,6 @@ export function QuizContainer() {
         rawLlmResponse: llmAnalysis.rawResponse,
         spiritualArchetype: llmAnalysis.archetype,
         personalizedInsights: llmAnalysis.insights,
-        videoScript: llmAnalysis.videoScript,
         referredBy: referrerId,
         // Only store display name and photo URL if they differ from Firebase Auth
         ...(user.displayName !== null && { displayName: user.displayName }),

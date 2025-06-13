@@ -7,7 +7,7 @@ export async function analyzeSpiritualGifts(responses: QuizResponse[]): Promise<
   spiritualGifts: SpiritualGift[];
   rawResponse: string;
 }> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-05-20' });
 
   const prompt = `As a spiritual gifts analyst, analyze these quiz responses and identify the person's spiritual gifts. Format the response as a JSON object with the following structure:
   {

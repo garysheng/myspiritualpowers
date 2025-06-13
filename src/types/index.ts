@@ -46,10 +46,6 @@ export interface QuizResultBackend {
     growthAreas: string[];
   };
   rating?: number;
-  videoScript?: {
-    title: string;
-    script: string;
-  };
   createdAt: Timestamp; // Firestore Timestamp
   updatedAt: Timestamp; // Firestore Timestamp
 }

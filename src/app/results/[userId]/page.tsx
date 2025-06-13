@@ -12,19 +12,11 @@ import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
 import { FloatingRating } from '@/components/rating/floating-rating';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
-import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass, Image, Mail } from 'lucide-react';
-import NextImage from 'next/image';
-import { SharePreview } from '@/components/share/share-preview';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';;
-import { VideoPlayer } from '@/components/video/video-player';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
+import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass } from 'lucide-react';
 
 export default function ResultsPage() {
   const { userId } = useParams();
   const { user, loading: authLoading } = useAuth();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<QuizResultBackend | null>(null);
@@ -128,16 +120,7 @@ export default function ResultsPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Section */}
         {results && (
-          <div className="flex items-center justify-center gap-4 mb-8">
-            {results.photoURL && (
-              <NextImage
-                src={results.photoURL}
-                alt={`${results.displayName}'s profile picture`}
-                width={64}
-                height={64}
-                className="rounded-full"
-              />
-            )}
+          <div className="flex items-center justify-center mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-white">
               Spiritual Powers Quiz Results for {results.displayName}
             </h1>
@@ -193,10 +176,7 @@ export default function ResultsPage() {
           </Card>
         )}
 
-        {/* Video Section */}
-        {userId && (
-          <VideoPlayer userId={userId as string} />
-        )}
+
 
         {/* Spiritual Gifts Card */}
         <Card className="relative overflow-hidden">
@@ -356,110 +336,7 @@ export default function ResultsPage() {
           </Card>
         )}
 
-        {/* Share Images Card */}
-        <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-primary/5 to-indigo-500/10" />
-          <CardHeader>
-            <CardTitle className="flex items-center justify-center gap-2">
-              <Image className="w-6 h-6 text-violet-400" />
-              <span className="text-4xl text-center font-bold bg-gradient-to-r from-violet-400 via-primary to-indigo-400 bg-clip-text text-transparent">
-                Your Share Image
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-8 relative">
-            <div className="bg-secondary/30 p-6 rounded-lg backdrop-blur-sm space-y-3">
-              <div className="aspect-square w-full bg-black/40 rounded-lg overflow-hidden">
-                {results && (
-                  <SharePreview
-                    userId={userId as string}
-                    dimension="square"
-                    displayName={results.displayName}
-                  />
-                )}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button
-                  className="flex-1 gap-2"
-                  onClick={async () => {
-                    if (!results) return;
-                    try {
-                      const imageRef = ref(storage, `share_images/${userId}/square.png`);
-                      const url = await getDownloadURL(imageRef);
-                      
-                      // Open in new tab
-                      window.open(url, '_blank');
-                      
-                      trackEvent(AnalyticsEvents.RESULTS_DOWNLOADED);
-                      
-                      toast({
-                        title: "Image opened!",
-                        description: "Right click and save to download.",
-                        duration: 3000,
-                      });
-                    } catch (error) {
-                      console.error('Error opening image:', error);
-                      toast({
-                        title: "Failed to open image",
-                        description: "Please try again later.",
-                        variant: "destructive",
-                        duration: 3000,
-                      });
-                    }
-                  }}
-                >
-                  <Image className="w-4 h-4" />
-                  Open Image
-                </Button>
-                <Button
-                  className="flex-1 gap-2"
-                  variant="secondary"
-                  onClick={async () => {
-                    if (!results) return;
 
-                    try {
-                      const imageRef = ref(storage, `share_images/${userId}/square.png`);
-                      const url = await getDownloadURL(imageRef);
-                      const response = await fetch(url);
-                      const blob = await response.blob();
-                      const file = new File([blob], 'spiritual-powers.png', { type: 'image/png' });
-
-                      const shareData = {
-                        title: 'Discover Your Spiritual Powers',
-                        text: `Hey! I just discovered my spiritual power archetype - I'm a ${results.spiritualArchetype.name}! 🌟 Take this insightful quiz to discover yours:`,
-                        url: `https://myspiritualpowers.com/results/${userId}`,
-                        files: [file]
-                      };
-
-                      if (navigator.canShare && navigator.canShare(shareData)) {
-                        trackEvent(AnalyticsEvents.RESULTS_SHARED, { platform: 'native_share' });
-                        await navigator.share(shareData);
-                      } else {
-                        toast({
-                          title: "Sharing not supported",
-                          description: "Your device doesn't support direct sharing. Try downloading and sharing manually.",
-                          variant: "destructive",
-                        });
-                      }
-                    } catch (error) {
-                      console.error('Error sharing:', error);
-                      if ((error as Error)?.name !== 'AbortError') {
-                        toast({
-                          title: "Error sharing",
-                          description: "There was an error sharing your image. Try downloading and sharing manually.",
-                          variant: "destructive",
-                        });
-                      }
-                    }
-                  }}
-                >
-                  <Mail className="w-4 h-4" />
-                  Share via Message
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Share Bar */}
@@ -469,7 +346,6 @@ export default function ResultsPage() {
           spiritualArchetype={results.spiritualArchetype.name}
           spiritualGifts={spiritualGifts}
           displayName={results.displayName}
-          photoURL={results.photoURL}
           biblicalExample={results.spiritualArchetype.biblicalExample}
           modernApplication={results.spiritualArchetype.modernApplication}
         />
