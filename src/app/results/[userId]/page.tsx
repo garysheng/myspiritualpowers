@@ -10,7 +10,6 @@ import { calculateGiftScores, GIFT_DESCRIPTIONS } from '@/data/spiritual-gifts-q
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
 import { ShareBar } from '@/components/share/share-bar';
-import { FloatingRating } from '@/components/rating/floating-rating';
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { Sparkles, Zap, Brain, Target, Book, GraduationCap, Compass } from 'lucide-react';
 
@@ -21,7 +20,6 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<QuizResultBackend | null>(null);
   const [spiritualGifts, setSpiritualGifts] = useState<SpiritualGift[]>([]);
-  const [hasRated, setHasRated] = useState(false);
 
   useEffect(() => {
     async function fetchResults() {
@@ -48,7 +46,6 @@ export default function ResultsPage() {
         };
 
         setResults(finalResultData);
-        setHasRated(!!resultData.rating); // Check if user has already rated
 
         // Convert responses array to Record<string, number>
         const responseRecord: Record<string, number> = {};
