@@ -95,7 +95,26 @@ export const QUESTIONS: QuizQuestion[] = questionsAndGifts.quizQuestions.map(q =
 
 // Map JSON spiritual gifts to SpiritualGift type
 export const GIFT_DESCRIPTIONS: Record<string, SpiritualGift> = questionsAndGifts.spiritualGifts.reduce((acc, gift) => {
-  acc[gift.gift.toLowerCase()] = {
+  // Create a mapping from JSON gift names to our internal keys
+  let key: string;
+  switch (gift.gift.toLowerCase()) {
+    case 'discerning of spirits':
+      key = SPIRITUAL_GIFTS.DISCERNMENT;
+      break;
+    case 'voluntary poverty':
+      key = SPIRITUAL_GIFTS.VOLUNTARY_POVERTY;
+      break;
+    case 'leading worship':
+      key = SPIRITUAL_GIFTS.WORSHIP_LEADING;
+      break;
+    case 'interpretation of tongues':
+      key = SPIRITUAL_GIFTS.INTERPRETATION;
+      break;
+    default:
+      key = gift.gift.toLowerCase();
+  }
+  
+  acc[key] = {
     name: gift.gift,
     description: gift.definition,
     biblicalReferences: gift.scriptureReferences,

@@ -109,13 +109,13 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-[calc(100svh-4rem)] p-4 pb-40">
-      {/* Show rating component only if this is the user's own results and they haven't rated yet */}
-      {user && user.uid === userId && !hasRated && (
+      {/* Rating popup disabled */}
+      {/* {user && user.uid === userId && !hasRated && (
         <FloatingRating
           userId={userId as string}
           onRated={() => setHasRated(true)}
         />
-      )}
+      )} */}
 
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Section */}
